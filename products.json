@@ -1,0 +1,74 @@
+[
+  {
+    "id": "P01",
+    "type": "Plain",
+    "number": "#1",
+    "color": "Sky Blue",
+    "pdf": "plain.pdf",
+    "page": 1
+  },
+  {
+    "id": "P02",
+    "type": "Plain",
+    "number": "#2",
+    "color": "White",
+    "pdf": "plain.pdf",
+    "page": 2
+  },
+  {
+    "id": "P03",
+    "type": "Plain",
+    "number": "#3",
+    "color": "Pink",
+    "pdf": "plain.pdf",
+    "page": 3
+  },
+  {
+    "id": "P04",
+    "type": "Printed",
+    "number": "#4",
+    "color": "Multi Print",
+    "pdf": "pirintat.pdf",
+    "page": 1
+  },
+  {
+    "id": "P05",
+    "type": "Printed",
+    "number": "#5",
+    "color": "Yellow Leaf",
+    "pdf": "pirintat.pdf",
+    "page": 2
+  },
+  {
+    "id": "P06",
+    "type": "Printed",
+    "number": "#6",
+    "color": "Orange Waves",
+    "pdf": "pirintat.pdf",
+    "page": 3
+  },
+  {
+    "id": "P07",
+    "type": "Lakhnavi",
+    "number": "#7",
+    "color": "White Thread",
+    "pdf": "lacknowi.pdf",
+    "page": 1
+  },
+  {
+    "id": "P08",
+    "type": "Lakhnavi",
+    "number": "#8",
+    "color": "Green Motif",
+    "pdf": "lacknowi.pdf",
+    "page": 2
+  },
+  {
+    "id": "P09",
+    "type": "Lakhnavi",
+    "number": "#9",
+    "color": "Pink Pearl",
+    "pdf": "lacknowi.pdf",
+    "page": 3
+  }
+]
