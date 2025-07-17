@@ -1,267 +1,180 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const collectionsSection = document.getElementById('collections');
-    const catalogDetailSection = document.getElementById('catalog-detail');
-    const catalogContent = document.getElementById('catalog-content');
-    const backToCollectionsBtn = catalogDetailSection.querySelector('.btn-back');
-    const detailSectionTitle = catalogDetailSection.querySelector('h2');
+  const catalogDiv = document.getElementById('catalog');
+  const productTypeFilter = document.getElementById('product-type-filter');
+  const loadingSpinner = document.getElementById('loading-spinner');
+  const productSearchInput = document.getElementById('product-search');
+  const searchButton = document.getElementById('search-button');
+  const clearSearchButton = document.getElementById('clear-search-button');
+  const productCountDiv = document.getElementById('product-count');
+  const backToTopButton = document.getElementById('back-to-top');
 
-    let allProducts = []; // To store all products from product.json
-    let organizedCategories = {}; // To store products organized by type
+  let productsData = []; // To store the fetched product data
 
-    // --- Utility Functions ---
+  // Function to fetch products from JSON
+  async function fetchProducts() {
+    loadingSpinner.style.display = 'flex'; // Show spinner
+    catalogDiv.style.display = 'none'; // Hide catalog
+    try {
+      const response = await fetch('products.json');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      productsData = await response.json();
+      populateProductTypes(productsData);
+      filterAndDisplayProducts(); // Call filterAndDisplayProducts to initially display and count
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      catalogDiv.innerHTML = '<p>Error loading products. Please try again later.</p>';
+      catalogDiv.style.display = 'block'; // Show error message
+      productCountDiv.textContent = 'Error loading products.';
+    } finally {
+      loadingSpinner.style.display = 'none'; // Hide spinner regardless of success or error
+      catalogDiv.style.display = 'grid'; // Show catalog grid after loading
+    }
+  }
 
-    // Function to group products by type
-    function groupProductsByType(products) {
-        const grouped = {};
-        products.forEach(product => {
-            if (!grouped[product.type]) {
-                grouped[product.type] = [];
-            }
-            grouped[product.type].push(product);
-        });
-        return grouped;
+  // Function to populate the product type filter
+  function populateProductTypes(products) {
+    const types = new Set(products.map(product => product.type));
+    types.forEach(type => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.textContent = type;
+      productTypeFilter.appendChild(option);
+    });
+  }
+
+  // Function to display products (now called by filterAndDisplayProducts)
+  function displayProducts(productsToDisplay) {
+    catalogDiv.innerHTML = ''; // Clear previous products
+    if (productsToDisplay.length === 0) {
+      catalogDiv.innerHTML = '<p>No products found for this category or search.</p>';
+      productCountDiv.textContent = 'No products found.'; // Update count
+      return;
     }
 
-    // Function to get a display image for a category
-    // You'll need to create thumbnail images like 'images/plain_thumbnail.jpg', 'images/lakhnavi_thumbnail.jpg'
-    function getCategoryThumbnail(type) {
-        switch (type) {
-            case 'Plain':
-                return 'images/plain_thumbnail.jpg'; // Path to a generic Plain category image
-            case 'Lakhnavi':
-                return 'images/lakhnavi_thumbnail.jpg'; // Path to a generic Lakhnavi category image
-            // Add cases for 'Print' or other types
-            default:
-                return 'images/default_thumbnail.jpg'; // Fallback
+    productsToDisplay.forEach((product, index) => {
+      const productCard = document.createElement('div');
+      productCard.classList.add('product-card');
+      // Set animation delay dynamically for staggered effect
+      productCard.style.animationDelay = `${index * 0.1}s`;
+
+      const productInfo = `
+        <div class="product-info">
+          <h2>${product.type} ${product.number}</h2>
+          <p><strong>ID:</strong> ${product.id}</p>
+          <p class="color"><strong>Color:</strong> ${product.color}</p>
+          <a href="./pdf/${product.pdf}#page=${product.page}" target="_blank" class="page-link">
+            View PDF (Page ${product.page}) <i class="fas fa-file-pdf"></i>
+          </a>
+        </div>
+      `;
+      productCard.innerHTML += productInfo;
+
+      const priceDetailsDiv = document.createElement('div');
+      priceDetailsDiv.classList.add('price-details');
+      priceDetailsDiv.innerHTML += '<h3>Pricing</h3>';
+
+      for (const category in product.pricing) {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.classList.add('price-category');
+        categoryDiv.innerHTML += `<h4>${category}:</h4>`;
+        const priceList = document.createElement('div');
+        priceList.classList.add('price-list');
+
+        for (const size in product.pricing[category]) {
+          const pricing = product.pricing[category][size];
+          const priceItem = document.createElement('span');
+          priceItem.classList.add('price-item');
+          priceItem.innerHTML = `
+            ${size}: <span class="mrp">₹${pricing.MRP}</span> 
+            <span class="discount-price">₹${pricing['Discount Price']}</span>
+          `;
+          priceList.appendChild(priceItem);
         }
-    }
-
-    // Function to get a display image for an individual product
-    // You'll need to create specific product images, e.g., 'images/P01_OrangePlain.jpg'
-    function getProductImage(product) {
-        // Example: 'images/P02_WhitePlain.jpg'
-        // Or, if you have consistent naming: 'images/' + product.id + '.jpg'
-        // Or, 'images/' + product.color.replace(/\s+/g, '') + '.jpg'
-        // For simplicity, let's use a placeholder first, you can adjust this.
-        return `images/${product.id}_${product.color.replace(/\s+/g, '')}.jpg`;
-    }
-
-
-    // Function to render PDF using PDF.js
-    async function renderPdfPage(url, pageNum, canvas) {
-        // Ensure the worker script is set if you're not using the full bundled PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-        try {
-            const loadingTask = pdfjsLib.getDocument(url);
-            const pdf = await loadingTask.promise;
-            const page = await pdf.getPage(pageNum); // Load the specific page
-
-            // Get viewport at a scale (adjust scale for better quality/fit)
-            const viewport = page.getViewport({ scale: 1.5 });
-            const context = canvas.getContext('2d');
-
-            // Set canvas dimensions to PDF page dimensions
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            // Render PDF page into canvas
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-            await page.render(renderContext).promise;
-
-            // Optional: Add a link to download the full PDF
-            const downloadLink = document.createElement('a');
-            downloadLink.href = url;
-            downloadLink.textContent = `Download ${url.split('/').pop()}`; // e.g., "Download plain.pdf"
-            downloadLink.target = "_blank";
-            downloadLink.classList.add('btn', 'btn-secondary', 'pdf-download-btn');
-            catalogContent.appendChild(downloadLink);
-
-        } catch (error) {
-            console.error(`Error rendering PDF from ${url}, page ${pageNum}:`, error);
-            catalogContent.innerHTML = `<p>Error loading PDF preview for this product. Please try again later or contact support. Details: ${error.message}</p>`;
-        }
-    }
-
-    // --- Rendering Functions ---
-
-    // Renders the initial category cards (Plain, Lakhnavi, etc.)
-    function renderCategoryCards() {
-        const collectionGrid = collectionsSection.querySelector('.collection-grid');
-        collectionGrid.innerHTML = ''; // Clear existing content
-
-        // Iterate over the organized categories to create cards
-        for (const type in organizedCategories) {
-            const productsInType = organizedCategories[type];
-            const card = document.createElement('div');
-            card.classList.add('collection-card');
-            const categoryName = type === 'Lakhnavi' ? 'Lucknowi' : type; // Display 'Lucknowi' instead of 'Lakhnavi'
-            const numProducts = productsInType.length;
-
-            card.innerHTML = `
-                <img src="${getCategoryThumbnail(type)}" alt="${categoryName} Collection" class="collection-image">
-                <h3>${categoryName} Kurtas</h3>
-                <p>Available in ${numProducts} ${numProducts > 1 ? 'colors/designs' : 'color/design'}.</p>
-                <a href="#" class="btn btn-secondary" data-category-type="${type}">View ${categoryName}</a>
-            `;
-            collectionGrid.appendChild(card);
-        }
-    }
-
-    // Renders individual product cards for a selected category
-    function renderProductsForCategory(type) {
-        detailSectionTitle.textContent = `${type === 'Lakhnavi' ? 'Lucknowi' : type} Collection`;
-        catalogContent.innerHTML = '<div class="product-grid"></div>'; // Create a grid for products
-        const productGrid = catalogContent.querySelector('.product-grid');
-
-        const productsToDisplay = organizedCategories[type];
-
-        if (!productsToDisplay || productsToDisplay.length === 0) {
-            productGrid.innerHTML = '<p>No products found for this category.</p>';
-            return;
-        }
-
-        productsToDisplay.forEach(product => {
-            const productCard = document.createElement('div');
-            productCard.classList.add('product-card'); // Use .product-card from previous CSS
-            // Find the lowest discount price to display "Starting from"
-            let lowestPrice = Infinity;
-            ['Kids', 'Mens', 'Ladies'].forEach(group => {
-                if (product.pricing[group]) {
-                    for (const size in product.pricing[group]) {
-                        const price = product.pricing[group][size]['Discount Price'];
-                        if (price < lowestPrice) {
-                            lowestPrice = price;
-                        }
-                    }
-                }
-            });
-
-            productCard.innerHTML = `
-                <img src="${getProductImage(product)}" alt="${product.color} ${product.type} Kurta" class="product-image">
-                <h3>${product.color}</h3>
-                <p>ID: ${product.id}</p>
-                <p class="starting-price">Starting from ₹${lowestPrice !== Infinity ? lowestPrice : 'N/A'}</p>
-                <a href="#" class="btn btn-primary view-product-details-btn" data-product-id="${product.id}">View Details</a>
-            `;
-            productGrid.appendChild(productCard);
-        });
-    }
-
-    // Renders detailed pricing for a single product and its PDF page
-    function renderSingleProductDetails(productId) {
-        const product = allProducts.find(p => p.id === productId);
-
-        if (!product) {
-            catalogContent.innerHTML = '<p>Product not found.</p>';
-            return;
-        }
-
-        detailSectionTitle.textContent = `${product.color} (${product.id})`;
-        catalogContent.innerHTML = `
-            <div class="single-product-detail-layout">
-                <div class="product-image-container">
-                    <img src="${getProductImage(product)}" alt="${product.color} ${product.type} Kurta" class="product-detail-image">
-                </div>
-                <div class="product-pricing-details">
-                    <h3>Pricing for ${product.color}</h3>
-                    ${Object.keys(product.pricing).map(category => `
-                        <h4>${category} Sizes</h4>
-                        <div class="size-pricing-table">
-                            ${Object.keys(product.pricing[category]).map(size => `
-                                <div class="size-row">
-                                    <span>${size}</span>
-                                    <div class="price-info">
-                                        <span class="mrp">MRP: ₹${product.pricing[category][size]['MRP']}</span>
-                                        <span class="discount-price">₹${product.pricing[category][size]['Discount Price']}</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `).join('')}
-                    <p class="pdf-info">Product shown on page ${product.page} of ${product.pdf}</p>
-                </div>
-                <div class="pdf-viewer">
-                    <h4>PDF Preview</h4>
-                    <canvas id="pdf-canvas"></canvas>
-                </div>
-            </div>
-        `;
-
-        // Render the specific PDF page
-        const pdfCanvas = document.getElementById('pdf-canvas');
-        if (pdfCanvas) {
-            renderPdfPage(product.pdf, product.page, pdfCanvas);
-        }
-    }
-
-
-    // --- View Management Functions ---
-
-    function showCollections() {
-        collectionsSection.classList.remove('hidden');
-        catalogDetailSection.classList.remove('active');
-        catalogDetailSection.classList.add('hidden');
-        // Reset scroll position if needed
-        window.scrollTo({ top: collectionsSection.offsetTop, behavior: 'smooth' });
-    }
-
-    function showDetailsView() {
-        collectionsSection.classList.add('hidden');
-        catalogDetailSection.classList.add('active');
-        catalogDetailSection.classList.remove('hidden');
-        // Scroll to the top of the details section
-        window.scrollTo({ top: catalogDetailSection.offsetTop, behavior: 'smooth' });
-    }
-
-
-    // --- Event Listeners ---
-
-    // Listener for clicking on a category card (e.g., "View Plain")
-    collectionsSection.addEventListener('click', (event) => {
-        const targetBtn = event.target.closest('.btn-secondary');
-        if (targetBtn && targetBtn.dataset.categoryType) {
-            event.preventDefault();
-            const categoryType = targetBtn.dataset.categoryType;
-            renderProductsForCategory(categoryType);
-            showDetailsView();
-        }
+        categoryDiv.appendChild(priceList);
+        priceDetailsDiv.appendChild(categoryDiv);
+      }
+      productCard.appendChild(priceDetailsDiv);
+      catalogDiv.appendChild(productCard);
     });
 
-    // Listener for clicking on an individual product's "View Details" button
-    catalogContent.addEventListener('click', (event) => {
-        const targetBtn = event.target.closest('.view-product-details-btn');
-        if (targetBtn && targetBtn.dataset.productId) {
-            event.preventDefault();
-            const productId = targetBtn.dataset.productId;
-            renderSingleProductDetails(productId);
-        }
-    });
+    // Update product count message
+    productCountDiv.textContent = `Displaying ${productsToDisplay.length} products.`;
+  }
 
+  // Function to filter and display products based on search query and type filter
+  function filterAndDisplayProducts() {
+    const selectedType = productTypeFilter.value;
+    const searchQuery = productSearchInput.value.toLowerCase().trim();
 
-    // Listener for the "Back to Collections" button
-    backToCollectionsBtn.addEventListener('click', showCollections);
-
-
-    // --- Initial Load ---
-
-    async function initializeCatalog() {
-        try {
-            const response = await fetch('product.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            allProducts = await response.json();
-            organizedCategories = groupProductsByType(allProducts);
-            renderCategoryCards();
-        } catch (error) {
-            console.error("Could not fetch product data:", error);
-            collectionsSection.innerHTML = '<p style="text-align: center; color: red;">Failed to load product data. Please try again later.</p>';
-        }
+    // Show/hide clear button based on search input
+    if (searchQuery) {
+      clearSearchButton.style.display = 'inline-block';
+    } else {
+      clearSearchButton.style.display = 'none';
     }
 
-    initializeCatalog();
+    let filteredProducts = productsData;
+
+    // Apply type filter
+    if (selectedType !== 'all') {
+      filteredProducts = filteredProducts.filter(product => product.type === selectedType);
+    }
+
+    // Apply search filter
+    if (searchQuery) {
+      filteredProducts = filteredProducts.filter(product =>
+        product.id.toLowerCase().includes(searchQuery) ||
+        product.color.toLowerCase().includes(searchQuery) ||
+        product.type.toLowerCase().includes(searchQuery) || // Search by type text too
+        (product.number && product.number.toLowerCase().includes(searchQuery)) // Also search by number, check if it exists
+      );
+    }
+    displayProducts(filteredProducts);
+  }
+
+  // Event listeners for filter and search
+  productTypeFilter.addEventListener('change', filterAndDisplayProducts);
+  searchButton.addEventListener('click', filterAndDisplayProducts);
+  productSearchInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      filterAndDisplayProducts();
+    }
+    // Update clear button visibility as user types
+    if (productSearchInput.value.trim() !== '') {
+      clearSearchButton.style.display = 'inline-block';
+    } else {
+      clearSearchButton.style.display = 'none';
+    }
+  });
+
+  // Clear search input and re-filter
+  clearSearchButton.addEventListener('click', () => {
+    productSearchInput.value = '';
+    filterAndDisplayProducts();
+  });
+
+  // When the user scrolls down 20px from the top of the document, show the button
+  window.onscroll = function() { scrollFunction() };
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      backToTopButton.style.display = "block";
+    } else {
+      backToTopButton.style.display = "none";
+    }
+  }
+
+  // When the user clicks on the button, scroll to the top of the document
+  backToTopButton.addEventListener('click', () => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  });
+
+  // Set current year in footer
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+
+  // Initial fetch and display
+  fetchProducts();
 });
