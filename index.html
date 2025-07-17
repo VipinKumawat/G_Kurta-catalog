@@ -5,22 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PLUSPOINT – Group Kurta Catalog</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
-<img src="banner.jpg" alt="Ganpati Special Banner" style="width: 100%; max-width: 720px; margin: 10px auto; display: block; border-radius: 10px;" />
+<header>
+  <img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
+  <img src="banner.jpg" alt="Ganpati Special Banner" class="banner-img" />
+  <h1><i class="fas fa-tshirt"></i> PLUSPOINT – Exclusive Men's Wear</h1>
+</header>
 
- <h1>🧥 PLUSPOINT – Exclusive Men'swear</h1>
-  <div id="catalog"></div>
+<main>
+  <div class="filters">
+    <label for="product-type-filter">Filter by Type:</label>
+    <select id="product-type-filter">
+      <option value="all">All</option>
+      </select>
+    <div class="search-bar">
+      <input type="text" id="product-search" placeholder="Search by ID, Color, or Type...">
+      <button id="search-button"><i class="fas fa-search"></i></button>
+      <button id="clear-search-button" style="display: none;"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+  <div id="product-count" class="product-count-message"></div>
+  <div id="loading-spinner" class="spinner-container">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+  <div id="catalog" class="product-grid"></div>
+</main>
 
-  <footer>
-    <p>📍 Garden Road, Chikhli | 📞 8866244409</p>
-    <p>“Ek nahi, poore group ki choice – PlusPoint!”</p>
-  </footer>
+<button id="back-to-top" title="Go to top"><i class="fas fa-arrow-up"></i></button>
 
-  <!-- PDF.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-  <!-- Our Script -->
-  <script src="script.js"></script>
+<footer>
+  <p>📍 Garden Road, Chikhli, Gujarat, India | 📞 <a href="tel:+918866244409">8866244409</a> | Email: <a href="mailto:info@pluspoint.com">info@pluspoint.com</a></p>
+  <div class="social-links">
+    <a href="https://wa.me/918866244409" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://www.facebook.com/yourpage" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+    <a href="https://www.instagram.com/youraccount" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+  <p>“Ek nahi, poore group ki choice – PlusPoint!”</p>
+  <p>&copy; <span id="current-year"></span> PLUSPOINT. All rights reserved.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
