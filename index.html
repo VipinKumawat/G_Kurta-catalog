@@ -13,6 +13,11 @@
   <img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
   <img src="banner.jpg" alt="Ganpati Special Banner" class="banner-img" />
   <h1><i class="fas fa-tshirt"></i> PLUSPOINT – Exclusive Men's Wear</h1>
+  <div class="cart-status">
+    <button id="view-cart-button" class="cart-button">
+      <i class="fas fa-shopping-cart"></i> My Cart (<span id="cart-item-count">0</span>)
+    </button>
+  </div>
 </header>
 
 <main>
@@ -47,6 +52,22 @@
   <p>“Ek nahi, poore group ki choice – PlusPoint!”</p>
   <p>&copy; <span id="current-year"></span> PLUSPOINT. All rights reserved.</p>
 </footer>
+
+<div id="cart-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2>Your Cart</h2>
+    <div id="cart-items-display">
+      <p id="empty-cart-message">Your cart is empty.</p>
+    </div>
+    <div class="cart-actions">
+      <button id="clear-cart-modal-button" class="action-button clear-button">Clear Cart</button>
+      <a id="place-order-whatsapp-button" class="action-button whatsapp-button" href="#" target="_blank" style="display: none;">
+        <i class="fab fa-whatsapp"></i> Place Order on WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 <script src="script.js"></script>
