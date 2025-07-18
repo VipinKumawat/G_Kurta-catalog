@@ -13,21 +13,20 @@
   <img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
   <img src="banner.jpg" alt="Ganpati Special Banner" class="banner-img" />
   <h1><i class="fas fa-tshirt"></i> PLUSPOINT – Exclusive Men's Wear</h1>
-  <div class="cart-status">
-    <button id="view-cart-button" class="cart-button">
-      <i class="fas fa-shopping-cart"></i> My Cart (<span id="cart-item-count">0</span>)
-    </button>
-  </div>
-</header>
+  </header>
 
 <main>
   <div class="filters">
-    <label for="product-type-filter">Filter by Type:</label>
-    <select id="product-type-filter">
-      <option value="all">All</option>
-      </select>
+    <label for="category-selection-container">Filter by Type:</label>
+    <div id="category-selection-container" class="category-selection-container">
+      <button class="category-filter-button active" data-type="all">
+        <img src="Catlogue_icon/all-icon.jpg" alt="All" class="category-thumbnail">
+        <span>All</span>
+      </button>
+      </div>
+
     <div class="search-bar">
-      <input type="text" id="product-search" placeholder="Search by ID, Color, or Type...">
+      <input type="text" id="product-search" placeholder="Search by ID, Color, or Number...">
       <button id="search-button"><i class="fas fa-search"></i></button>
       <button id="clear-search-button" style="display: none;"><i class="fas fa-times"></i></button>
     </div>
@@ -53,23 +52,11 @@
   <p>&copy; <span id="current-year"></span> PLUSPOINT. All rights reserved.</p>
 </footer>
 
-<div id="cart-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <h2>Your Cart</h2>
-    <div id="cart-items-display">
-      <p id="empty-cart-message">Your cart is empty.</p>
-    </div>
-    <div class="cart-actions">
-      <button id="clear-cart-modal-button" class="action-button clear-button">Clear Cart</button>
-      <a id="place-order-whatsapp-button" class="action-button whatsapp-button" href="#" target="_blank" style="display: none;">
-        <i class="fab fa-whatsapp"></i> Place Order on WhatsApp
-      </a>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script>
+  // Set the workerSrc for pdf.js (important for it to work)
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+</script>
 <script src="script.js"></script>
 </body>
 </html>
