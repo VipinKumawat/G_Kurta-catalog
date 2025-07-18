@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
   const catalogDiv = document.getElementById('catalog');
-  const productTypeFilter = document.getElementById('product-type-filter');
+  const categorySelectionContainer = document.getElementById('category-selection-container'); // New filter container
   const loadingSpinner = document.getElementById('loading-spinner');
   const productSearchInput = document.getElementById('product-search');
   const searchButton = document.getElementById('search-button');
@@ -9,19 +9,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const productCountDiv = document.getElementById('product-count');
   const backToTopButton = document.getElementById('back-to-top');
 
-  // Cart elements
-  const cartItemCountSpan = document.getElementById('cart-item-count');
-  const viewCartButton = document.getElementById('view-cart-button');
-  const cartModal = document.getElementById('cart-modal');
-  const closeModalButton = document.querySelector('.close-button');
-  const cartItemsDisplayDiv = document.getElementById('cart-items-display');
-  const emptyCartMessage = document.getElementById('empty-cart-message');
-  const clearCartModalButton = document.getElementById('clear-cart-modal-button');
-  const placeOrderWhatsappButton = document.getElementById('place-order-whatsapp-button');
-
   // Global Data Storage
   let productsData = []; // To store the fetched product data
-  let cart = []; // Array to store cart items
+  let selectedCategoryFilter = 'all'; // Default filter category
+
+  // --- Utility Functions ---
+
+  /**
+   * Helper function to get a category thumbnail path.
+   * YOU MUST ENSURE THESE IMAGE FILES EXIST IN YOUR 'Catlogue_icon/' FOLDER.
+   * @param {string} type - The product type (e.g., 'Digital', 'Plain Kurta', 'Lakhnavi Kurta').
+   * @returns {string} The path to the thumbnail image.
+   */
+  function getCategoryThumbnail(type) {
+    const sanitizedType = type.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '');
+    // Mapping common types to specific image names. Adjust as per your actual file names.
+    switch (sanitizedType) {
+        case 'digital':
+            return 'Catlogue_icon/digital-icon.jpg'; // Assuming you have this
+        case 'plain-kurta':
+            return 'Catlogue_icon/plain-icon.jpg'; // Assuming you have this
+        case 'printed-kurta':
+            return 'Catlogue_icon/printed-icon.jpg'; // Assuming you have this
+        case 'lakhnavi-kurta':
+            return 'Catlogue_icon/lakhnavi-icon.jpg'; // Assuming you have this
+        // Add more cases as needed for your specific product types
+        default:
+            return 'Catlogue_icon/default-icon.jpg'; // A fallback default icon
+    }
+  }
+
+
+  /**
+   * Helper function to get a color code for the swatch.
+   * You might expand this with more specific color mappings.
+   * @param {string} colorName - The name of the color (e.g., "Red", "Blue Plain").
+   * @returns {string} CSS color code.
+   */
+  function getColorCode(colorName) {
+    const lowerCaseColor = colorName.toLowerCase();
+    switch (lowerCaseColor) {
+      case 'orange plain': return '#FFA500';
+      case 'white plain': return '#FFFFFF';
+      case 'maroon plain':
+      case 'maroon': return '#800000';
+      case 'yellow plain': return '#FFFF00';
+      case 'black plain': return '#000000';
+      case 'sky plain': return '#87CEEB';
+      case 'b. green plain':
+      case 'b. green': return '#006400'; // Darker green
+      case 'rama plain': return '#008080'; // Teal-like
+      case 'blue plain':
+      case 'blue': return '#0000FF';
+      case 'wine plain':
+      case 'wine': return '#722F37';
+      default: return '#ccc'; // Default light gray for unknown colors
+    }
+  }
 
   // --- Core Functions ---
 
@@ -37,9 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       productsData = await response.json();
-      populateProductTypes(productsData); // Populate filter dropdown
+      populateCategoryFilters(productsData); // Populate category buttons
       filterAndDisplayProducts(); // Initial display of products
-      updateCartCount(); // Update cart count from localStorage
     } catch (error) {
       console.error('Error fetching products:', error);
       catalogDiv.innerHTML = '<p>Error loading products. Please try again later.</p>';
@@ -52,19 +95,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Populates the product type filter dropdown with unique product types.
+   * Populates the category filter buttons with unique product types.
    * @param {Array} products - The array of product objects.
    */
-  function populateProductTypes(products) {
+  function populateCategoryFilters(products) {
     const types = new Set(products.map(product => product.type));
-    productTypeFilter.innerHTML = '<option value="all">All</option>'; // Always start with 'All'
+    // Clear existing buttons except the "All" button
+    categorySelectionContainer.querySelectorAll('.category-filter-button:not([data-type="all"])').forEach(button => button.remove());
+
     types.forEach(type => {
-      const option = document.createElement('option');
-      option.value = type;
-      option.textContent = type;
-      productTypeFilter.appendChild(option);
+      const button = document.createElement('button');
+      button.classList.add('category-filter-button');
+      button.dataset.type = type;
+      button.innerHTML = `
+        <img src="${getCategoryThumbnail(type)}" alt="${type}" class="category-thumbnail">
+        <span>${type}</span>
+      `;
+
+      button.addEventListener('click', () => {
+        categorySelectionContainer.querySelectorAll('.category-filter-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        selectedCategoryFilter = type;
+        filterAndDisplayProducts();
+      });
+      categorySelectionContainer.appendChild(button);
     });
+
+    // Event listener for the "All" button
+    const allButton = categorySelectionContainer.querySelector('[data-type="all"]');
+    if (allButton) {
+      allButton.addEventListener('click', () => {
+        categorySelectionContainer.querySelectorAll('.category-filter-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        allButton.classList.add('active');
+        selectedCategoryFilter = 'all';
+        filterAndDisplayProducts();
+      });
+    }
   }
+
 
   /**
    * Displays pricing for a specific category for a given product.
@@ -79,20 +151,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (categoryPricing && Object.keys(categoryPricing).length > 0) {
       const priceList = document.createElement('div');
       priceList.classList.add('price-list');
-      
+
       for (const size in categoryPricing) {
         const pricing = categoryPricing[size];
         const priceItem = document.createElement('span');
         priceItem.classList.add('price-item');
         priceItem.innerHTML = `
-          ${size}: <span class="mrp">₹${pricing.MRP}</span> 
+          ${size}: <span class="mrp">₹${pricing.MRP}</span>
           <span class="discount-price">₹${pricing['Discount Price']}</span>
         `;
         priceList.appendChild(priceItem);
       }
       priceDisplayElement.appendChild(priceList);
     } else {
-      // Display message if no pricing is available for the selected category
       priceDisplayElement.innerHTML = '<p class="no-pricing-message">Pricing not available for this category.</p>';
     }
   }
@@ -101,11 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Filters products based on selected type and search query, then displays them.
    */
   function filterAndDisplayProducts() {
-    const selectedType = productTypeFilter.value;
     const searchTerm = productSearchInput.value.toLowerCase().trim();
 
     const filteredProducts = productsData.filter(product => {
-      const matchesType = selectedType === 'all' || product.type === selectedType;
+      const matchesType = selectedCategoryFilter === 'all' || product.type === selectedCategoryFilter;
       const matchesSearch = searchTerm === '' ||
         product.id.toLowerCase().includes(searchTerm) ||
         product.color.toLowerCase().includes(searchTerm) ||
@@ -134,293 +204,251 @@ document.addEventListener('DOMContentLoaded', () => {
       productCard.style.animationDelay = `${index * 0.1}s`;
 
       const availableCategories = Object.keys(product.pricing);
-      // Determine a default category to show prices for initially
       const defaultCategory = availableCategories.includes('Mens') ? 'Mens' : availableCategories[0];
+      if (!defaultCategory && product.pricing && Object.keys(product.pricing).length > 0) {
+        // Fallback for cases where 'Mens' isn't available, but other categories are
+        // This ensures a category is selected if any pricing is present.
+        defaultCategory = Object.keys(product.pricing)[0];
+      }
+
+      // PDF Preview Section
+      const pdfPreviewContainer = document.createElement('div');
+      pdfPreviewContainer.classList.add('pdf-preview-container');
+      const canvas = document.createElement('canvas');
+      canvas.classList.add('pdf-preview-canvas');
+      pdfPreviewContainer.appendChild(canvas);
+      productCard.appendChild(pdfPreviewContainer);
+
+      // Render PDF page on canvas
+      renderPdfPage(product.pdf, product.page, canvas);
 
       // Product basic info section
       const productInfo = `
         <div class="product-info">
           <h2>${product.type} ${product.number}</h2>
           <p><strong>ID:</strong> ${product.id}</p>
-          <p class="color"><strong>Color:</strong> ${product.color}</p>
-          <a href="./pdf/${product.pdf}#page=${product.page}" target="_blank" class="page-link">
-            View PDF (Page ${product.page}) <i class="fas fa-file-pdf"></i>
-          </a>
+          <p class="color-display"><strong>Color:</strong> ${product.color}
+            <span class="color-swatch" style="background-color: ${getColorCode(product.color)};"></span>
+          </p>
         </div>
       `;
       productCard.innerHTML += productInfo;
 
-      // Category selection buttons
+      // Category selection buttons (for Men/Ladies/Kids)
       const categoryButtonsContainer = document.createElement('div');
       categoryButtonsContainer.classList.add('category-buttons-container');
-      
+
       const dynamicPriceDisplay = document.createElement('div');
       dynamicPriceDisplay.classList.add('dynamic-price-display');
 
-      let currentSelectedCategory = defaultCategory; // Keep track of the active category for this specific card
+      let currentSelectedCategoryForCard = defaultCategory; // Keep track of the active category for this specific card
 
-      // Create a button for each category available for this product
-      availableCategories.forEach(cat => {
-        const button = document.createElement('button');
-        button.classList.add('category-button');
-        button.textContent = cat;
-        button.dataset.category = cat; // Store category name in data attribute for easy access
+      // Only add category buttons if pricing exists for them
+      if (availableCategories.length > 0) {
+        availableCategories.forEach(cat => {
+          const button = document.createElement('button');
+          button.classList.add('category-button');
+          button.textContent = cat;
+          button.dataset.category = cat;
 
-        // Set the default active category and display its prices
-        if (cat === defaultCategory) {
-          button.classList.add('active');
-          displayCategoryPrices(product, cat, dynamicPriceDisplay);
-        }
+          if (cat === defaultCategory) {
+            button.classList.add('active');
+            displayCategoryPrices(product, cat, dynamicPriceDisplay);
+          }
 
-        // Add click event listener to switch active category and update prices
-        button.addEventListener('click', () => {
-          // Remove 'active' class from all buttons in this card's container
-          categoryButtonsContainer.querySelectorAll('.category-button').forEach(btn => {
-            btn.classList.remove('active');
+          button.addEventListener('click', () => {
+            categoryButtonsContainer.querySelectorAll('.category-button').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            currentSelectedCategoryForCard = cat; // Update for this specific card
+            displayCategoryPrices(product, cat, dynamicPriceDisplay);
           });
-          button.classList.add('active'); // Add 'active' class to the clicked button
-          currentSelectedCategory = cat; // Update the actively selected category for this card
-          displayCategoryPrices(product, cat, dynamicPriceDisplay); // Display prices for the newly selected category
+          categoryButtonsContainer.appendChild(button);
         });
-        categoryButtonsContainer.appendChild(button);
+        productCard.appendChild(categoryButtonsContainer);
+      } else {
+         dynamicPriceDisplay.innerHTML = '<p class="no-pricing-message">No categories or pricing defined for this product.</p>';
+      }
+
+
+      productCard.appendChild(dynamicPriceDisplay);
+
+
+      // WhatsApp Order Button (instead of Add to Cart)
+      const whatsappOrderButton = document.createElement('a');
+      whatsappOrderButton.classList.add('whatsapp-order-button');
+      whatsappOrderButton.innerHTML = '<i class="fab fa-whatsapp"></i> Order Now on WhatsApp';
+      whatsappOrderButton.href = '#'; // Default href, will be updated on click
+      whatsappOrderButton.target = '_blank';
+
+      // Add click listener for WhatsApp Order
+      whatsappOrderButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent default link behavior
+        initiateWhatsappOrder(product, currentSelectedCategoryForCard);
       });
 
-      productCard.appendChild(categoryButtonsContainer); // Add buttons to the card
-      productCard.appendChild(dynamicPriceDisplay); // Add price display area
-
-      // Add to Cart Button
-      const addToCartButton = document.createElement('button');
-      addToCartButton.classList.add('add-to-cart-button');
-      addToCartButton.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
-      
-      addToCartButton.addEventListener('click', () => {
-        // Use the currently active category for adding to cart
-        const selectedPricing = product.pricing[currentSelectedCategory];
-
-        // Check if pricing exists for the selected category
-        if (!selectedPricing || Object.keys(selectedPricing).length === 0) {
-          alert(`No pricing available for "${currentSelectedCategory}" for this product. Cannot add to cart.`);
-          return;
-        }
-
-        // Prompt for size and validate input
-        let sizeInput = prompt(`Enter size for ${product.id} (${currentSelectedCategory}) e.g. S, M, L, XL, XXL (Available: ${Object.keys(selectedPricing).join(', ')}):`);
-        if (!sizeInput) return; // User cancelled
-
-        sizeInput = sizeInput.toUpperCase().trim();
-        if (!selectedPricing[sizeInput]) {
-          alert(`Invalid size "${sizeInput}" for ${currentSelectedCategory}. Please choose from available sizes: ${Object.keys(selectedPricing).join(', ')}`);
-          return;
-        }
-
-        // Prompt for quantity and validate input
-        let quantityInput = prompt(`Enter quantity for size ${sizeInput}:`, "1");
-        if (!quantityInput || isNaN(quantityInput) || parseInt(quantityInput) <= 0) {
-          alert("Please enter a valid quantity (a positive number).");
-          return;
-        }
-        const quantity = parseInt(quantityInput);
-
-        // Create item object to add to cart
-        const itemToAdd = {
-          productId: product.id,
-          productType: product.type,
-          productNumber: product.number,
-          productColor: product.color,
-          selectedCategory: currentSelectedCategory, // Crucial: Store the selected category
-          selectedSize: sizeInput,
-          quantity: quantity,
-          price: selectedPricing[sizeInput]['Discount Price'],
-          mrp: selectedPricing[sizeInput]['MRP']
-        };
-
-        addToCart(itemToAdd); // Add the item to the cart
-      });
-
-      productCard.appendChild(addToCartButton); // Add the button to the card
-      catalogDiv.appendChild(productCard); // Add the complete card to the catalog
+      productCard.appendChild(whatsappOrderButton);
+      catalogDiv.appendChild(productCard);
     });
 
-    // Update the displayed product count
     productCountDiv.textContent = `Displaying ${productsToDisplay.length} products.`;
   }
 
-  // --- Cart Management Functions ---
-
   /**
-   * Loads cart data from localStorage.
+   * Renders a specific page of a PDF onto a given canvas.
+   * @param {string} pdfUrl - The URL of the PDF file.
+   * @param {number} pageNumber - The page number to render.
+   * @param {HTMLCanvasElement} canvas - The canvas element to render to.
    */
-  function loadCart() {
-    const storedCart = localStorage.getItem('pluspointCart');
-    if (storedCart) {
-      cart = JSON.parse(storedCart);
+  async function renderPdfPage(pdfUrl, pageNumber, canvas) {
+    if (!pdfUrl) {
+        console.warn('PDF URL is missing for rendering.');
+        // Display a fallback message on the canvas
+        const context = canvas.getContext('2d');
+        canvas.height = 100;
+        canvas.width = 150;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#f8d7da'; // Light red background
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.font = '12px Arial';
+        context.fillStyle = '#721c24'; // Dark red text
+        context.textAlign = 'center';
+        context.fillText('No PDF Defined', canvas.width / 2, canvas.height / 2);
+        return;
+    }
+
+    const loadingTask = pdfjsLib.getDocument(`./pdf/${pdfUrl}`);
+    try {
+      const pdf = await loadingTask.promise;
+      const page = await pdf.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 0.8 }); // Adjust scale as needed
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport,
+      };
+      await page.render(renderContext).promise;
+    } catch (error) {
+      console.error(`Error rendering PDF page ${pageNumber} from ${pdfUrl}:`, error);
+      // Display a fallback message or image on the canvas
+      const context = canvas.getContext('2d');
+      canvas.height = 100;
+      canvas.width = 150;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = '#f8d7da'; // Light red background
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.font = '12px Arial';
+      context.fillStyle = '#721c24'; // Dark red text
+      context.textAlign = 'center';
+      context.fillText('PDF Preview Failed', canvas.width / 2, canvas.height / 2 - 10);
+      context.fillText('(Open PDF to view)', canvas.width / 2, canvas.height / 2 + 10);
     }
   }
 
-  /**
-   * Saves current cart data to localStorage.
-   */
-  function saveCart() {
-    localStorage.setItem('pluspointCart', JSON.stringify(cart));
-  }
 
   /**
-   * Adds an item to the cart, updating quantity if item already exists.
-   * @param {Object} item - The item object to add.
+   * Initiates the WhatsApp order process by prompting for size/quantity and generating the message.
+   * @param {Object} product - The product object to order.
+   * @param {string} selectedCategory - The category selected for this product card.
    */
-  function addToCart(item) {
-    // Check if item with same ID, category, and size already exists
-    const existingItemIndex = cart.findIndex(
-      (cartItem) =>
-        cartItem.productId === item.productId &&
-        cartItem.selectedCategory === item.selectedCategory &&
-        cartItem.selectedSize === item.selectedSize
-    );
-
-    if (existingItemIndex > -1) {
-      cart[existingItemIndex].quantity += item.quantity; // Update quantity
-    } else {
-      cart.push(item); // Add new item
-    }
-    saveCart(); // Save updated cart to localStorage
-    updateCartCount(); // Update cart icon count
-    alert(`"${item.productType} ${item.productNumber}" (Category: ${item.selectedCategory}, Size: ${item.selectedSize}, Qty: ${item.quantity}) added to cart!`);
-  }
-
-  /**
-   * Removes an item from the cart by its index.
-   * @param {number} index - The index of the item to remove.
-   */
-  function removeFromCart(index) {
-    cart.splice(index, 1); // Remove item from array
-    saveCart(); // Save updated cart
-    updateCartCount(); // Update cart icon count
-    renderCartItems(); // Re-render cart in modal to reflect changes
-  }
-
-  /**
-   * Clears all items from the cart after confirmation.
-   */
-  function clearCart() {
-    if (confirm("Are you sure you want to clear your entire cart?")) {
-      cart = []; // Empty the cart array
-      saveCart(); // Save empty cart
-      updateCartCount(); // Update cart icon count
-      renderCartItems(); // Re-render cart (will show empty message)
-      alert("Your cart has been cleared!");
-      cartModal.style.display = 'none'; // Close modal after clearing
-    }
-  }
-
-  /**
-   * Updates the item count displayed on the cart icon and manages button visibility.
-   */
-  function updateCartCount() {
-    cartItemCountSpan.textContent = cart.length;
-    // Show/hide place order button based on cart items
-    if (cart.length > 0) {
-      placeOrderWhatsappButton.style.display = 'inline-block';
-      emptyCartMessage.style.display = 'none';
-    } else {
-      placeOrderWhatsappButton.style.display = 'none';
-      emptyCartMessage.style.display = 'block';
-    }
-  }
-
-  /**
-   * Renders the items currently in the cart within the modal.
-   */
-  function renderCartItems() {
-    cartItemsDisplayDiv.innerHTML = ''; // Clear previous items
-    if (cart.length === 0) {
-      emptyCartMessage.style.display = 'block'; // Show empty cart message
-      return;
-    } else {
-      emptyCartMessage.style.display = 'none'; // Hide empty cart message
+  function initiateWhatsappOrder(product, selectedCategory) {
+    if (!selectedCategory || !product.pricing[selectedCategory]) {
+        alert("Please select a category for this product to view pricing and order.");
+        return;
     }
 
-    cart.forEach((item, index) => {
-      const cartItemDiv = document.createElement('div');
-      cartItemDiv.classList.add('cart-item');
-      cartItemDiv.innerHTML = `
-        <div class="cart-item-info">
-          <strong>${item.productType} ${item.productNumber}</strong> (${item.productColor})<br>
-          Category: ${item.selectedCategory}, Size: ${item.selectedSize}, Qty: ${item.quantity}<br>
-          Price: ₹${item.price} (MRP: ₹${item.mrp})
-        </div>
-        <button class="cart-item-remove" data-index="${index}">Remove</button>
-      `;
-      cartItemsDisplayDiv.appendChild(cartItemDiv);
+    const pricing = product.pricing[selectedCategory];
+    let orderDetails = [];
+    let isValidInput = false;
+
+    // Build prompt message for sizes and prices
+    let promptMessage = `Ordering ${product.type} ${product.number} (${product.color} - Category: ${selectedCategory})\n\n`;
+    promptMessage += `Available Sizes (Enter Quantity):\n`;
+
+    for (const size in pricing) {
+        promptMessage += `- ${size} (MRP: ₹${pricing[size].MRP}, Disc. Price: ₹${pricing[size]['Discount Price']})\n`;
+    }
+    promptMessage += `\nExample: S:2, M:1, XL:3 (Use comma to separate different sizes)`;
+
+    const input = prompt(promptMessage);
+
+    if (input) {
+        const sizeQuantityPairs = input.split(',').map(s => s.trim()).filter(s => s);
+        sizeQuantityPairs.forEach(pair => {
+            const parts = pair.split(':');
+            if (parts.length === 2) {
+                const size = parts[0].trim().toUpperCase(); // Normalize size input
+                const quantity = parseInt(parts[1].trim());
+
+                if (pricing[size] && !isNaN(quantity) && quantity > 0) {
+                    orderDetails.push({
+                        size: size,
+                        quantity: quantity,
+                        price: pricing[size]['Discount Price'],
+                        mrp: pricing[size].MRP
+                    });
+                    isValidInput = true;
+                } else if (pricing[size] && (!isNaN(quantity) && quantity === 0)) {
+                    // User entered 0, ignore this size but don't flag as invalid input overall
+                } else {
+                    alert(`Invalid input for size '${parts[0]}' or quantity '${parts[1]}'. Please check your input format.`);
+                    isValidInput = false; // Flag as invalid if any part is wrong
+                    return; // Exit forEach
+                }
+            } else {
+                alert(`Invalid format for '${pair}'. Please use 'SIZE:QUANTITY' (e.g., S:2).`);
+                isValidInput = false; // Flag as invalid
+                return; // Exit forEach
+            }
+        });
+    }
+
+    if (!isValidInput || orderDetails.length === 0) {
+        alert("Order cancelled or no valid quantities entered. Please try again with valid size and quantity (e.g., S:2, M:1).");
+        return;
+    }
+
+    // Generate WhatsApp message
+    let whatsappMessage = `Hello PlusPoint Team,\n\nI'd like to order the following item:\n\n`;
+    whatsappMessage += `* Product ID: ${product.id}\n`;
+    whatsappMessage += `    - Type: ${product.type}\n`;
+    whatsappMessage += `    - Number: ${product.number}\n`;
+    whatsappMessage += `    - Color: ${product.color}\n`;
+    whatsappMessage += `    - Category: ${selectedCategory}\n`;
+    whatsappMessage += `    - Ordered Sizes & Quantities:\n`;
+
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    orderDetails.forEach(detail => {
+        whatsappMessage += `        - Size: ${detail.size}, Quantity: ${detail.quantity} pieces\n`;
+        whatsappMessage += `          (Price per piece: ₹${detail.price}, MRP: ₹${detail.mrp})\n`;
+        totalItems += detail.quantity;
+        totalPrice += (detail.price * detail.quantity);
     });
 
-    // Add event listeners for dynamically created remove buttons
-    document.querySelectorAll('.cart-item-remove').forEach(button => {
-      button.addEventListener('click', (event) => {
-        const indexToRemove = parseInt(event.target.dataset.index);
-        removeFromCart(indexToRemove);
-      });
-    });
+    whatsappMessage += `\nTotal Pieces: ${totalItems}\n`;
+    whatsappMessage += `Estimated Total Price: ₹${totalPrice.toFixed(2)}\n\n`;
+
+    whatsappMessage += `Could you please confirm the availability and total amount? Also, let me know about payment options and delivery details.\n\nThank you!`;
+
+    const whatsappUrl = `https://wa.me/918866244409?text=${encodeURIComponent(whatsappMessage)}`;
+    window.open(whatsappUrl, '_blank');
   }
 
-  /**
-   * Generates the WhatsApp message string based on current cart items.
-   * @returns {string} The URL-encoded WhatsApp message.
-   */
-  function generateWhatsappOrderMessage() {
-    if (cart.length === 0) {
-      return encodeURIComponent("Hello PlusPoint Team, I'd like to inquire about products. My cart is empty.");
-    }
-
-    let message = "Hello PlusPoint Team,\n\nI'd like to place an order for the following items from your catalog:\n\n";
-
-    cart.forEach((item, index) => {
-      message += `* Item ${index + 1}:\n`;
-      message += `    - Product ID: ${item.productId}\n`;
-      message += `    - Type: ${item.productType}\n`;
-      message += `    - Number: ${item.productNumber}\n`;
-      message += `    - Color: ${item.productColor}\n`;
-      message += `    - Category: ${item.selectedCategory}\n`; // Crucial: Include selected category
-      message += `    - Size: ${item.selectedSize}\n`;
-      message += `    - Quantity: ${item.quantity}\n`;
-      message += `    - Price per piece: ₹${item.price} (MRP ₹${item.mrp})\n\n`;
-    });
-
-    message += "Could you please confirm the total amount and availability of these items? Also, let me know about payment options and delivery details.\n\nThank you!";
-    
-    return encodeURIComponent(message);
-  }
 
   // --- Event Listeners ---
 
-  // Cart Modal related events
-  viewCartButton.addEventListener('click', () => {
-    cartModal.style.display = 'flex'; // Show modal
-    renderCartItems(); // Populate cart items in modal
-    // Set the WhatsApp link with the generated message
-    placeOrderWhatsappButton.href = `https://wa.me/918866244409?text=${generateWhatsappOrderMessage()}`;
-  });
-
-  closeModalButton.addEventListener('click', () => {
-    cartModal.style.display = 'none'; // Hide modal
-  });
-
-  // Close modal if clicked outside the content
-  window.addEventListener('click', (event) => {
-    if (event.target === cartModal) {
-      cartModal.style.display = 'none';
-    }
-  });
-
-  clearCartModalButton.addEventListener('click', clearCart); // Clear cart button in modal
-
-  // Filter and Search events
-  productTypeFilter.addEventListener('change', filterAndDisplayProducts);
+  // Search events
   searchButton.addEventListener('click', filterAndDisplayProducts);
   productSearchInput.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
       filterAndDisplayProducts();
     }
-    // Show/hide clear search button
     if (productSearchInput.value.trim() !== '') {
       clearSearchButton.style.display = 'inline-block';
     } else {
@@ -429,8 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   clearSearchButton.addEventListener('click', () => {
-    productSearchInput.value = ''; // Clear search input
-    filterAndDisplayProducts(); // Re-filter and display
+    productSearchInput.value = '';
+    filterAndDisplayProducts();
+    clearSearchButton.style.display = 'none'; // Hide after clearing
   });
 
   // Back to Top Button functionality
@@ -443,14 +472,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   backToTopButton.addEventListener('click', () => {
-    document.body.scrollTop = 0; // For Safari
-    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   });
 
   // Set current year in footer
   document.getElementById('current-year').textContent = new Date().getFullYear();
 
   // --- Initial Load ---
-  loadCart(); // Load any previously saved cart items
   fetchProducts(); // Start fetching and displaying products
 });
