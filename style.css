@@ -52,44 +52,11 @@ h1 .fas {
   color: #ff9900; /* Orange icon */
 }
 
-/* Cart Status and Button in Header */
-.cart-status {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.cart-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.cart-button:hover {
-  background-color: #0056b3;
-}
-
-#cart-item-count {
-  background-color: #dc3545; /* Red for count */
-  border-radius: 50%;
-  padding: 3px 8px;
-  font-size: 0.8em;
-  font-weight: bold;
-}
-
-
-/* Filters */
+/* Filters & Category Selection */
 .filters {
   text-align: center;
   margin: 20px 0;
+  padding: 0 15px; /* Add some padding for smaller screens */
 }
 
 .filters label {
@@ -97,23 +64,72 @@ h1 .fas {
   font-weight: bold;
   color: #555;
   margin-right: 10px;
+  display: block; /* Make label take full width */
+  margin-bottom: 10px;
 }
 
-.filters select {
-  padding: 8px 12px;
+/* New Category Selection Container Styles */
+.category-selection-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 15px; /* Space between buttons */
+  margin-bottom: 25px;
+}
+
+.category-filter-button {
+  background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1em;
-  background-color: #fff;
+  border-radius: 8px;
+  padding: 10px 15px;
   cursor: pointer;
-  outline: none;
+  font-size: 1em;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px; /* Minimum width for buttons */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.category-filter-button:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.category-filter-button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.category-filter-button.active .category-thumbnail {
+  border-color: white; /* White border for active thumbnail */
+}
+
+.category-thumbnail {
+  width: 60px; /* Thumbnail size */
+  height: 60px;
+  border-radius: 50%; /* Make it circular */
+  object-fit: cover; /* Cover the area, crop if needed */
+  border: 2px solid #eee; /* Light border */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: border-color 0.3s ease;
 }
 
-.filters select:hover,
-.filters select:focus {
-  border-color: #007bff;
+.category-filter-button span {
+  color: #555; /* Default text color */
+  transition: color 0.3s ease;
 }
+
+.category-filter-button.active span {
+  color: white; /* White text for active button */
+}
+
 
 /* Search Bar Styles */
 .search-bar {
@@ -258,7 +274,7 @@ h1 .fas {
 }
 
 .product-info {
-  padding: 20px;
+  padding: 15px; /* Reduced padding slightly */
   text-align: center;
 }
 
@@ -274,61 +290,52 @@ h1 .fas {
   color: #666;
 }
 
-.product-info .color {
+.product-info .color-display { /* New class for color text */
   font-weight: bold;
   color: #333;
+  margin-top: 8px; /* Added margin */
+  display: flex; /* For alignment with color swatch if added later */
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
-.product-info .page-link {
-  display: inline-block;
-  margin-top: 15px;
-  background-color: #28a745; /* Green for PDF link */
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+.color-swatch { /* Optional: If you want to show a color circle */
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    vertical-align: middle;
 }
 
-.product-info .page-link:hover {
-  background-color: #218838;
+/* PDF Canvas Preview */
+.pdf-preview-container {
+    width: 100%;
+    overflow: hidden; /* Hide any overflow if canvas is larger */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* Light background for canvas */
 }
 
-/* Add to Cart Button */
-.add-to-cart-button {
-  display: inline-block;
-  margin-top: 10px;
-  background-color: #6c757d; /* Grey for Add to Cart */
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  font-size: 0.95em;
-  border: none; /* Make it a button */
-  cursor: pointer;
+.pdf-preview-canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
 }
 
-.add-to-cart-button i {
-  margin-right: 5px;
-}
-
-.add-to-cart-button:hover {
-  background-color: #5a6268;
+.pdf-preview-canvas:hover {
+    transform: scale(1.02); /* Slight zoom on hover */
 }
 
 
-/* New Styles for Category Selector within Product Card */
-.price-selector-container {
-  text-align: center;
-  margin-bottom: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #eee; /* Separator for clarity */
-}
-
-/* New Styles for Category Buttons within Product Card */
+/* Category Buttons within Product Card */
 .category-buttons-container {
   text-align: center;
   margin-top: 10px;
@@ -337,12 +344,12 @@ h1 .fas {
   border-top: 1px solid #eee; /* Separator for clarity */
 }
 
-.category-button {
+.category-button { /* These buttons are for Men/Ladies/Kids inside product card */
   background-color: #f0f0f0; /* Light grey for inactive */
   color: #555;
   border: 1px solid #ccc;
   padding: 8px 15px;
-  margin: 0 5px;
+  margin: 0 5px 10px; /* Added bottom margin for stacking */
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9em;
@@ -370,7 +377,7 @@ h1 .fas {
 
 /* Style for the dynamic price display area */
 .dynamic-price-display {
-  margin-top: 10px;
+  margin: 10px 15px; /* Adjusted margins */
   padding: 10px;
   background-color: #eef; /* Light blue background for emphasis */
   border-radius: 8px;
@@ -407,6 +414,35 @@ h1 .fas {
   font-style: italic;
   font-size: 0.9em;
 }
+
+/* WhatsApp Order Button (instead of Add to Cart) */
+.whatsapp-order-button {
+  display: block; /* Make it a block level button */
+  width: calc(100% - 30px); /* Full width with padding taken into account */
+  margin: 10px 15px 15px; /* Center and give space */
+  background-color: #25D366; /* WhatsApp Green */
+  color: white;
+  padding: 12px 15px; /* Larger padding */
+  border-radius: 8px; /* Slightly more rounded */
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  font-size: 1em; /* Increased font size */
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+  text-align: center;
+}
+
+.whatsapp-order-button i {
+  margin-right: 8px;
+}
+
+.whatsapp-order-button:hover {
+  background-color: #1DA851;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+}
+
 
 /* Back to Top Button */
 #back-to-top {
@@ -477,152 +513,11 @@ footer a:hover {
   transform: translateY(-3px);
 }
 
-/* Modal (Popup for Cart) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 100; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 25px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 600px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  position: relative;
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.close-button {
-  color: #aaa;
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-  color: black;
-  text-decoration: none;
-}
-
-#cart-items-display {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px dashed #eee;
-}
-
-.cart-item:last-child {
-  border-bottom: none;
-}
-
-.cart-item-info {
-  flex-grow: 1;
-}
-
-.cart-item-info strong {
-  color: #007bff;
-}
-
-.cart-item-remove {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.cart-item-remove:hover {
-  background-color: #c82333;
-}
-
-.cart-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.action-button {
-  padding: 12px 20px;
-  border-radius: 5px;
-  font-size: 1.1em;
-  font-weight: bold;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease;
-}
-
-.clear-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.clear-button:hover {
-  background-color: #5a6268;
-}
-
-.whatsapp-button {
-  background-color: #25D366; /* WhatsApp Green */
-  color: white;
-}
-
-.whatsapp-button:hover {
-  background-color: #1DA851;
-}
-
-#empty-cart-message {
-    text-align: center;
-    font-style: italic;
-    color: #888;
-    padding: 20px;
-}
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   h1 {
     font-size: 1.8em;
-  }
-
-  .cart-status {
-    position: static; /* Stack on smaller screens */
-    margin-bottom: 15px;
-    text-align: center;
   }
 
   .product-grid {
@@ -632,11 +527,6 @@ footer a:hover {
 
   .product-card {
     margin-bottom: 20px;
-  }
-
-  .modal-content {
-    width: 95%;
-    padding: 15px;
   }
 }
 
@@ -667,16 +557,15 @@ footer a:hover {
     margin-left: 0;
     margin-top: 5px;
   }
-  .cart-actions {
-    flex-direction: column;
-    gap: 10px;
+  .category-filter-button {
+    min-width: 90px;
+    padding: 8px 10px;
   }
-  .action-button {
-    width: 100%;
+  .category-thumbnail {
+    width: 50px;
+    height: 50px;
   }
-  .category-button {
-    display: block; /* Stack buttons on small screens */
-    width: calc(100% - 10px); /* Full width with margin */
-    margin: 5px auto;
+  .category-filter-button span {
+    font-size: 0.9em;
   }
 }
