@@ -26,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mapping common types to specific image names. Adjust as per your actual file names.
     switch (sanitizedType) {
         case 'digital':
-            return 'Catlogue_icon/digital-icon.jpg'; // Assuming you have this
+            return 'Catlogue_icon/printed-page-1.jpg'; // Assuming you have this
         case 'plain-kurta':
-            return 'Catlogue_icon/plain-icon.jpg'; // Assuming you have this
+            return 'Catlogue_icon/plain-page-1.jpg'; // Assuming you have this
         case 'printed-kurta':
-            return 'Catlogue_icon/printed-icon.jpg'; // Assuming you have this
+            return 'Catlogue_icon/printed-page-1.jpg'; // Assuming you have this
         case 'lakhnavi-kurta':
-            return 'Catlogue_icon/lakhnavi-icon.jpg'; // Assuming you have this
+            return 'Catlogue_icon/lakhnavi-page-1.jpg'; // Assuming you have this
         // Add more cases as needed for your specific product types
         default:
             return 'Catlogue_icon/default-icon.jpg'; // A fallback default icon
