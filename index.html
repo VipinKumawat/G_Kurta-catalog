@@ -3,53 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PLUSPOINT – Group Kurta Order</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PLUSPOINT – Group Kurta</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <img src="catalogue_icon/plain-page-9.jpg" alt="PlusPoint Logo" class="logo" />
-    <h1>PLUSPOINT Group Order</h1>
+    <img src="catalogue_icon/plain-page-9.jpg" alt="Logo" class="logo" />
+    <h1>🧥 PLUSPOINT – Group Kurta Order</h1>
+    <div class="filters">
+      <button onclick="filterProducts('All')">All</button>
+      <button onclick="filterProducts('Plain')">Plain</button>
+      <button onclick="filterProducts('Printed')">Printed</button>
+      <button onclick="filterProducts('Lakhnavi')">Lakhnavi</button>
+    </div>
   </header>
 
-  <!-- 🔍 Filter -->
-  <section class="filter-section">
-    <label for="typeFilter">Select Type:</label>
-    <select id="typeFilter">
-      <option value="all">All</option>
-      <option value="Plain">Plain</option>
-      <option value="Printed">Printed</option>
-      <option value="Lakhnavi">Lakhnavi</option>
-    </select>
-  </section>
+  <main>
+    <div id="productList" class="product-grid"></div>
+  </main>
 
-  <!-- 📦 Products List -->
-  <section id="productList" class="product-list"></section>
-
-  <!-- 🧾 Group Order Form -->
-  <section class="form-section">
-    <h2>Place Group Order</h2>
-    <form id="groupOrderForm">
-      <textarea id="orderSummary" readonly placeholder="Selected product will appear here..."></textarea>
-
-      <div class="group-fields">
-        <label>👥 Group Name:</label>
-        <input type="text" id="groupName" required>
-
-        <label>🏠 Address:</label>
-        <input type="text" id="address" required>
-
-        <label>📞 Contact Number:</label>
-        <input type="tel" id="contactNumber" required>
-      </div>
-
-      <a id="whatsappBtn" target="_blank" class="whatsapp-button">📲 Send Order on WhatsApp</a>
-    </form>
-  </section>
-
-  <footer>
-    <a href="pdf/plain.pdf" target="_blank">📄 View Full Catalogue</a>
-  </footer>
+  <!-- Order Form Modal (JS se fill hoga) -->
+  <div id="orderFormModal" class="modal hidden">
+    <!-- Dynamic Form Content Here -->
+  </div>
 
   <script src="app.js"></script>
 </body>
