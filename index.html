@@ -2,53 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Group Kurta Order</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-    label { display: block; margin-top: 10px; }
-    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-    button { padding: 10px 20px; margin-top: 20px; background: green; color: white; border: none; }
-    img { max-width: 100%; margin-top: 20px; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Group Kurta Order – Ganpati Special</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Group Kurta Order</h2>
+  <div class="container">
+    <h1>🪔 Ganpati Group Order Confirmation</h1>
 
-  <label>Catalogue Type:</label>
-  <select id="type">
-    <option value="lakhnavi">Lakhnavi</option>
-    <option value="chikan">Chikan</option>
-  </select>
+    <form id="orderForm">
+      <div class="form-grid">
+        <label>Product Type:</label>
+        <select id="type" required>
+          <option value="">Select</option>
+          <option value="lakhnavi">Lakhnavi</option>
+          <option value="festival">Festival</option>
+        </select>
 
-  <label>Page No:</label>
-  <input type="number" id="page" placeholder="Enter page no" />
+        <label>Catalogue Page No:</label>
+        <input type="number" id="page" min="1" placeholder="e.g. 6" required />
 
-  <label>Color:</label>
-  <input type="text" id="color" placeholder="Ex: Yellow, Pink" />
+        <label>Group Name:</label>
+        <input type="text" id="group" required />
 
-  <label>MEN Sizes:</label>
-  <textarea id="men" placeholder="Ex: 36:2, 40:1"></textarea>
+        <label>Customer Name:</label>
+        <input type="text" id="name" required />
 
-  <label>LADIES Sizes:</label>
-  <textarea id="ladies" placeholder="Ex: M:3, XL:1"></textarea>
+        <label>Delivery Address:</label>
+        <textarea id="address" required></textarea>
 
-  <label>KIDS Sizes:</label>
-  <textarea id="kids" placeholder="Ex: 26:2"></textarea>
+        <label>Customer Phone:</label>
+        <input type="tel" id="phone" placeholder="+91..." required />
 
-  <label>Group Name:</label>
-  <input type="text" id="group" />
+        <label>Order Date:</label>
+        <input type="date" id="date" required />
+      </div>
 
-  <label>Delivery Address:</label>
-  <textarea id="address"></textarea>
+      <div id="sizeInputs" class="size-section">
+        <h2>Select Sizes & Quantity</h2>
+        <div id="sizeFields"></div>
+      </div>
 
-  <label>Contact Number:</label>
-  <input type="text" id="contact" />
+      <button type="submit">🔄 Generate Order & Preview</button>
+    </form>
 
-  <button onclick="generateOrder()">Send Order via WhatsApp</button>
+    <div id="previewSection" class="card">
+      <h2>🧾 Preview</h2>
+      <div class="preview-bg">
+        <img id="productImage" src="" alt="Product Preview" />
+        <pre id="orderText"></pre>
+      </div>
+      <a id="whatsappLink" target="_blank" class="whatsapp-btn">📲 Send on WhatsApp</a>
+    </div>
+  </div>
 
-  <img id="preview" src="" alt="Preview will appear here" />
-
-  <script src="main.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
