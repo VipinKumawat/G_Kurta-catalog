@@ -51,7 +51,7 @@ function handleColorSelect() {
 
 function openPDF() {
   if (selectedProduct && selectedProduct.pdf) {
-    const url = `${selectedProduct.pdf}#page=${selectedProduct.page}`;
+    const url = `pdf/${selectedProduct.pdf}#page=${selectedProduct.page}`;
     window.open(url, '_blank');
   }
 }
