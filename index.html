@@ -3,30 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PlusPoint Kurta Selector</title>
+  <title>Order Kurta</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🧥 PlusPoint Kurta Selector</h1>
+    <h1>PLUSPOINT – Kurta Order</h1>
 
-    <label for="typeSelect">1️⃣ Type:</label>
-    <select id="typeSelect">
-      <option value="">Select Type</option>
-    </select>
+    <label>Type:</label>
+    <select id="typeSelect"></select>
 
-    <label for="colorSelect">2️⃣ Color:</label>
-    <select id="colorSelect" disabled>
-      <option value="">Select Color</option>
-    </select>
+    <label>Color:</label>
+    <select id="colorSelect"></select>
 
-    <div id="pdfBtn" class="hide">
-      <button onclick="openPDF()">📄 View Catalog Page</button>
+    <label>Size:</label>
+    <select id="sizeSelect"></select>
+
+    <label>Quantity:</label>
+    <input type="number" id="quantityInput" min="1" value="1" />
+
+    <div class="product-preview">
+      <h3>Product Preview</h3>
+      <iframe id="pdfPreview" width="100%" height="500px"></iframe>
     </div>
 
-    <div id="sizePricing" class="hide">
-      <h3>🧷 Size-wise Pricing:</h3>
-      <div id="pricingOutput"></div>
+    <div class="price-display" id="priceDisplay"></div>
+
+    <button id="orderButton">Add to Order</button>
+
+    <div id="orderSummary">
+      <h2>Order Summary</h2>
+      <ul id="orderList"></ul>
     </div>
   </div>
 
