@@ -1,94 +1,75 @@
-let products = []
-let selectedProduct = null
+let productData = [];
+let selectedProduct = null;
 
-window.onload = async () => {
-  const res = await fetch('product.json')
-  products = await res.json()
+fetch('product.json')
+  .then(res => res.json())
+  .then(data => {
+    productData = Array.isArray(data) ? data : [data];
+    populateTypeDropdown();
+  });
 
-  const types = [...new Set(products.map(p => p.type))]
-  const typeSelect = document.getElementById('type')
-  typeSelect.innerHTML = types.map(t => `<option value="${t}">${t}</option>`).join('')
-  typeSelect.onchange = loadColors
-  loadColors()
+function populateTypeDropdown() {
+  const typeSelect = document.getElementById('typeSelect');
+  const types = [...new Set(productData.map(p => p.type))];
+  types.forEach(type => {
+    const opt = document.createElement('option');
+    opt.value = type;
+    opt.textContent = type;
+    typeSelect.appendChild(opt);
+  });
+
+  typeSelect.addEventListener('change', handleTypeChange);
 }
 
-function loadColors() {
-  const selectedType = document.getElementById('type').value
-  const colors = products
-    .filter(p => p.type === selectedType)
-    .map(p => p.color)
+function handleTypeChange() {
+  const type = document.getElementById('typeSelect').value;
+  const colorSelect = document.getElementById('colorSelect');
+  colorSelect.innerHTML = '<option value="">Select Color</option>';
+  colorSelect.disabled = false;
 
-  const colorSelect = document.getElementById('color')
-  colorSelect.innerHTML = colors.map(c => `<option value="${c}">${c}</option>`).join('')
-  colorSelect.onchange = updatePreview
-  updatePreview()
+  const filtered = productData.filter(p => p.type === type);
+  filtered.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.color;
+    opt.textContent = p.color;
+    colorSelect.appendChild(opt);
+  });
+
+  colorSelect.addEventListener('change', handleColorSelect);
 }
 
-function updatePreview() {
-  const type = document.getElementById('type').value
-  const color = document.getElementById('color').value
-  selectedProduct = products.find(p => p.type === type && p.color === color)
+function handleColorSelect() {
+  const type = document.getElementById('typeSelect').value;
+  const color = document.getElementById('colorSelect').value;
+  selectedProduct = productData.find(p => p.type === type && p.color === color);
 
-  if (!selectedProduct) return
-
-  const imgPath = `Catlogue_icon/${type}-page-${selectedProduct.page}.jpg`
-  document.getElementById('product-img').src = imgPath
-  document.getElementById('product-name').innerText = `${selectedProduct.color} – No. ${selectedProduct.number}`
-  document.getElementById('catalogue-info').innerText = `📄 Page ${selectedProduct.page} | File: ${selectedProduct.pdf}`
-
-  renderSizeOptions()
+  if (selectedProduct) {
+    document.getElementById('pdfBtn').classList.remove('hide');
+    showPricing();
+  }
 }
 
-function renderSizeOptions() {
-  const container = document.getElementById('size-selection')
-  container.innerHTML = ''
+function openPDF() {
+  if (selectedProduct && selectedProduct.pdf) {
+    const url = `${selectedProduct.pdf}#page=${selectedProduct.page}`;
+    window.open(url, '_blank');
+  }
+}
 
-  for (let [groupType, sizes] of Object.entries(selectedProduct.pricing)) {
-    let html = `<div class="size-group"><h4>👤 ${groupType.toUpperCase()}</h4>`
-    for (let [size, price] of Object.entries(sizes)) {
-      html += `
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px">
-          <label>${size} – ₹${price["Discount Price"]}</label>
-          <input type="number" min="0" id="qty-${groupType}-${size}" style="width: 60px;" />
-        </div>
-      `
+function showPricing() {
+  const output = document.getElementById('pricingOutput');
+  const sizePricing = selectedProduct.pricing;
+  let result = '';
+
+  for (const category in sizePricing) {
+    result += `\n📍 ${category}:\n`;
+    const sizes = sizePricing[category];
+    for (const size in sizes) {
+      const { MRP, "Discount Price": discount } = sizes[size];
+      result += `  • Size ${size}: ₹${MRP} → ₹${discount}\n`;
     }
-    html += `</div>`
-    container.innerHTML += html
-  }
-}
-
-function sendOrder() {
-  const group = document.getElementById('groupName').value.trim()
-  const addr = document.getElementById('address').value.trim()
-  const phone = document.getElementById('phone').value.trim()
-
-  if (!group || !addr || !phone) {
-    alert("Please fill all customer details.")
-    return
   }
 
-  let totalQty = 0
-  let totalAmt = 0
-
-  let msg = `✅ GROUP ORDER CONFIRMATION\n\n🧥 Product: ${selectedProduct.color} – No. ${selectedProduct.number}\n📄 Catalogue: Page ${selectedProduct.page} | File: ${selectedProduct.pdf}\n\n---\n`
-
-  for (let [groupType, sizes] of Object.entries(selectedProduct.pricing)) {
-    let block = ''
-    for (let [size, price] of Object.entries(sizes)) {
-      const qty = +document.getElementById(`qty-${groupType}-${size}`).value || 0
-      if (qty > 0) {
-        const rate = price["Discount Price"]
-        totalQty += qty
-        totalAmt += qty * rate
-        block += `${size} – Qty: ${qty} – ₹${rate} each\n`
-      }
-    }
-    if (block) msg += `👤 ${groupType.toUpperCase()} SIZES\n${block}\n`
-  }
-
-  msg += `---\n👥 Group Name: ${group}\n🏠 Delivery Address: ${addr}\n📞 Contact Number: ${phone}\n\n🗓️ Order Date: ${new Date().toLocaleDateString()}\n🧾 Total Pieces: ${totalQty}\n💰 Total Approx Amount: ₹${totalAmt}\n\n📦 Thanks for your group order!\nWe'll confirm availability and reach out shortly. 🙏`
-
-  const whatsappURL = `https://wa.me/919722609460?text=${encodeURIComponent(msg)}`
-  window.open(whatsappURL, '_blank')
+  document.getElementById('sizePricing').classList.remove('hide');
+  output.textContent = result.trim();
 }
