@@ -1,16 +1,16 @@
-let productData = [];
+let products = [];
 let selectedProduct = null;
 
 fetch('product.json')
   .then(res => res.json())
   .then(data => {
-    productData = Array.isArray(data) ? data : [data];
+    products = Array.isArray(data) ? data : [data];
     populateTypeDropdown();
   });
 
 function populateTypeDropdown() {
   const typeSelect = document.getElementById('typeSelect');
-  const types = [...new Set(productData.map(p => p.type))];
+  const types = [...new Set(products.map(p => p.type))];
   types.forEach(type => {
     const opt = document.createElement('option');
     opt.value = type;
@@ -27,7 +27,7 @@ function handleTypeChange() {
   colorSelect.innerHTML = '<option value="">Select Color</option>';
   colorSelect.disabled = false;
 
-  const filtered = productData.filter(p => p.type === type);
+  const filtered = products.filter(p => p.type === type);
   filtered.forEach(p => {
     const opt = document.createElement('option');
     opt.value = p.color;
@@ -41,7 +41,7 @@ function handleTypeChange() {
 function handleColorSelect() {
   const type = document.getElementById('typeSelect').value;
   const color = document.getElementById('colorSelect').value;
-  selectedProduct = productData.find(p => p.type === type && p.color === color);
+  selectedProduct = products.find(p => p.type === type && p.color === color);
 
   if (selectedProduct) {
     document.getElementById('pdfBtn').classList.remove('hide');
