@@ -119,3 +119,109 @@ button[type="submit"]:hover {
   text-align: center;
   width: 100%;
 }
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(to bottom, #fffdf5, #ffe0b2);
+  color: #333;
+  padding-bottom: 100px;
+}
+
+header {
+  background-color: #ff6f00;
+  color: white;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+label {
+  font-weight: 600;
+  margin-top: 12px;
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+input:focus, textarea:focus {
+  border-color: #ff9100;
+  outline: none;
+}
+
+button {
+  background: #ff6f00;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #e65100;
+}
+
+.preview-box {
+  background: url('bg/ganpati-theme.jpg') center/cover no-repeat;
+  border-radius: 20px;
+  padding: 16px;
+  margin-top: 20px;
+  color: #fff;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
+}
+
+.preview-box h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.preview-product-img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+}
+
+.size-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.size-table th, .size-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+}
