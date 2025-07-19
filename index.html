@@ -3,29 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PLUSPOINT – Group Kurta</title>
+  <title>Catalog for Group Order</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <img src="catalogue_icon/plain-page-9.jpg" alt="Logo" class="logo" />
-    <h1>🧥 PLUSPOINT – Group Kurta Order</h1>
-    <div class="filters">
-      <button onclick="filterProducts('All')">All</button>
-      <button onclick="filterProducts('Plain')">Plain</button>
-      <button onclick="filterProducts('Printed')">Printed</button>
-      <button onclick="filterProducts('Lakhnavi')">Lakhnavi</button>
-    </div>
+    <img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
+    <h1>Catalog for Group Order</h1>
+    <p class="subheading">Janmashtami • Ganpati • Navratri • Marriage • Haldi etc</p>
   </header>
 
   <main>
-    <div id="productList" class="product-grid"></div>
+    <section class="selector">
+      <label for="kurtaType">🧥 Select Kurta Type:</label>
+      <select id="kurtaType">
+        <option value="">-- Select --</option>
+        <option value="plain">Plain Kurta</option>
+        <option value="printed">Printed Kurta</option>
+        <option value="lakhnavi">Lakhnavi Kurta</option>
+      </select>
+
+      <label for="kurtaColor">🎨 Select Color:</label>
+      <select id="kurtaColor" disabled>
+        <option value="">-- Select Kurta Type First --</option>
+      </select>
+    </section>
+
+    <section class="preview">
+      <h2>🖼️ Preview</h2>
+      <div class="preview-box">
+        <img id="previewImage" src="" alt="Kurta Preview" />
+        <p id="previewLabel"></p>
+      </div>
+    </section>
+
+    <section class="buttons">
+      <button id="nextStepBtn">Next Step ➡️</button>
+    </section>
   </main>
 
-  <!-- Order Form Modal (JS se fill hoga) -->
-  <div id="orderFormModal" class="modal hidden">
-    <!-- Dynamic Form Content Here -->
-  </div>
+  <footer>
+    <p>© 2025 PLUSPOINT | Custom Festive Collection</p>
+  </footer>
 
   <script src="app.js"></script>
 </body>
