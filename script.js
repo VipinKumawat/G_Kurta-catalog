@@ -1,4 +1,5 @@
-const productData = products.json ;
+let productData = [];
+let currentProduct = null;
 
 const typeSelect = document.getElementById("typeSelect");
 const colorSelect = document.getElementById("colorSelect");
@@ -8,10 +9,18 @@ const priceDisplay = document.getElementById("priceDisplay");
 const pdfPreview = document.getElementById("pdfPreview");
 const orderList = document.getElementById("orderList");
 
-let currentProduct = null;
+fetch('products.json')
+  .then(response => response.json())
+  .then(data => {
+    productData = data;
+    populateTypes();
+    typeSelect.dispatchEvent(new Event("change"));
+  })
+  .catch(error => console.error("Error loading products.json:", error));
 
 function populateTypes() {
   const types = [...new Set(productData.map(p => p.type))];
+  typeSelect.innerHTML = "";
   types.forEach(type => {
     const option = document.createElement("option");
     option.value = type;
@@ -75,6 +84,7 @@ function updatePreview() {
   pdfPreview.src = `${currentProduct.pdf}#page=${currentProduct.page}`;
 }
 
+// Event Listeners
 typeSelect.addEventListener("change", () => {
   populateColors(typeSelect.value);
 });
@@ -92,10 +102,8 @@ document.getElementById("orderButton").addEventListener("click", () => {
   const qty = parseInt(quantityInput.value);
   const [cat, size] = selected.split(":");
   const price = currentProduct.pricing[cat][size];
+
   const listItem = document.createElement("li");
   listItem.textContent = `${currentProduct.color} | ${cat} ${size} – Qty: ${qty} | ₹${price["Discount Price"] * qty}`;
   orderList.appendChild(listItem);
 });
-
-populateTypes();
-typeSelect.dispatchEvent(new Event("change"));
