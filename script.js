@@ -81,7 +81,7 @@ function updatePrice() {
 
 function updatePreview() {
   if (!currentProduct) return;
-  pdfPreview.src = `${currentProduct.pdf}#page=${currentProduct.page}`;
+  pdfPreview.src = `pdf/${currentProduct.pdf}#page=${currentProduct.page}`;
 }
 
 // Event Listeners
