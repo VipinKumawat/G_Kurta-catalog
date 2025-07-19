@@ -3,56 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Group Kurta Order – Ganpati Special</title>
+  <title>PlusPoint Kurta Selector</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🪔 Ganpati Group Order Confirmation</h1>
+    <h1>🧥 PlusPoint Kurta Selector</h1>
 
-    <form id="orderForm">
-      <div class="form-grid">
-        <label>Product Type:</label>
-        <select id="type" required>
-          <option value="plain"></option>
-          <option value="lakhnavi">Lakhnavi</option>
-          <option value="printat">Festival</option>
-        </select>
+    <label for="typeSelect">1️⃣ Type:</label>
+    <select id="typeSelect">
+      <option value="">Select Type</option>
+    </select>
 
-        <label>Catalogue Page No:</label>
-        <input type="number" id="page" min="1" placeholder="e.g. 6" required />
+    <label for="colorSelect">2️⃣ Color:</label>
+    <select id="colorSelect" disabled>
+      <option value="">Select Color</option>
+    </select>
 
-        <label>Group Name:</label>
-        <input type="text" id="group" required />
+    <div id="pdfBtn" class="hide">
+      <button onclick="openPDF()">📄 View Catalog Page</button>
+    </div>
 
-        <label>Customer Name:</label>
-        <input type="text" id="name" required />
-
-        <label>Delivery Address:</label>
-        <textarea id="address" required></textarea>
-
-        <label>Customer Phone:</label>
-        <input type="tel" id="phone" placeholder="+91..." required />
-
-        <label>Order Date:</label>
-        <input type="date" id="date" required />
-      </div>
-
-      <div id="sizeInputs" class="size-section">
-        <h2>Select Sizes & Quantity</h2>
-        <div id="sizeFields"></div>
-      </div>
-
-      <button type="submit">🔄 Generate Order & Preview</button>
-    </form>
-
-    <div id="previewSection" class="card">
-      <h2>🧾 Preview</h2>
-      <div class="preview-bg">
-        <img id="productImage" src="" alt="Product Preview" />
-        <pre id="orderText"></pre>
-      </div>
-      <a id="whatsappLink" target="_blank" class="whatsapp-btn">📲 Send on WhatsApp</a>
+    <div id="sizePricing" class="hide">
+      <h3>🧷 Size-wise Pricing:</h3>
+      <div id="pricingOutput"></div>
     </div>
   </div>
 
