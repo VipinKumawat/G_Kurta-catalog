@@ -3,49 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catalog for Group Order</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Group Kurta Order</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .active-tab {
+      background-color: #2563eb;
+      color: white;
+    }
+  </style>
 </head>
-<body>
-  <header>
-    <img src="pluspoint-logo.png" alt="PlusPoint Logo" class="logo" />
-    <h1>Catalog for Group Order</h1>
-    <p class="subheading">Janmashtami • Ganpati • Navratri • Marriage • Haldi etc</p>
-  </header>
+<body class="bg-gray-100 text-gray-800 p-4">
+  <div class="max-w-xl mx-auto bg-white rounded-xl shadow-xl p-4">
+    <h1 class="text-xl font-bold text-center mb-4">Group Kurta Order</h1>
 
-  <main>
-    <section class="selector">
-      <label for="kurtaType">🧥 Select Kurta Type:</label>
-      <select id="kurtaType">
-        <option value="">-- Select --</option>
-        <option value="plain">Plain Kurta</option>
-        <option value="printed">Printed Kurta</option>
-        <option value="lakhnavi">Lakhnavi Kurta</option>
+    <!-- Selectors -->
+    <div class="space-y-3 mb-4">
+      <select id="typeSelect" class="w-full p-2 border rounded">
+        <option value="">Select Kurta Type</option>
       </select>
-
-      <label for="kurtaColor">🎨 Select Color:</label>
-      <select id="kurtaColor" disabled>
-        <option value="">-- Select Kurta Type First --</option>
+      <select id="numberSelect" class="w-full p-2 border rounded">
+        <option value="">Select Kurta Number</option>
       </select>
-    </section>
+      <select id="colorSelect" class="w-full p-2 border rounded">
+        <option value="">Select Kurta Color</option>
+      </select>
+    </div>
 
-    <section class="preview">
-      <h2>🖼️ Preview</h2>
-      <div class="preview-box">
-        <img id="previewImage" src="" alt="Kurta Preview" />
-        <p id="previewLabel"></p>
-      </div>
-    </section>
+    <!-- Photo Preview -->
+    <div id="preview" class="mb-4 hidden">
+      <img id="previewImage" src="" class="w-full rounded-lg shadow-lg">
+      <p id="previewText" class="text-center mt-2 text-sm text-gray-600"></p>
+    </div>
 
-    <section class="buttons">
-      <button id="nextStepBtn">Next Step ➡️</button>
-    </section>
-  </main>
+    <!-- Category Tabs -->
+    <div class="flex justify-between mb-2">
+      <button onclick="showCategory('Mens')" class="tab-btn w-full mx-1 py-2 rounded bg-gray-200">👨‍🦱 MEN</button>
+      <button onclick="showCategory('Ladies')" class="tab-btn w-full mx-1 py-2 rounded bg-gray-200">👩 LADIES</button>
+      <button onclick="showCategory('Kids')" class="tab-btn w-full mx-1 py-2 rounded bg-gray-200">👶 KIDS</button>
+    </div>
 
-  <footer>
-    <p>© 2025 PLUSPOINT | Custom Festive Collection</p>
-  </footer>
+    <!-- Sizes Grid -->
+    <div id="sizeContainer" class="mb-4 space-y-2"></div>
 
-  <script src="app.js"></script>
+    <!-- Group Info -->
+    <div class="space-y-2">
+      <input type="text" id="groupName" placeholder="👥 Group Name" class="w-full p-2 border rounded">
+      <input type="text" id="address" placeholder="🏠 Address" class="w-full p-2 border rounded">
+      <input type="text" id="contact" placeholder="📞 Contact Number" class="w-full p-2 border rounded">
+    </div>
+
+    <!-- Final Message Button -->
+    <button onclick="generateMessage()" class="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+      📩 Generate WhatsApp Message
+    </button>
+
+    <!-- Output -->
+    <textarea id="output" rows="10" class="w-full mt-4 p-2 border rounded text-sm"></textarea>
+  </div>
+
+  <!-- Product JSON -->
+  <script src="product.js"></script>
+
+  <!-- Script Logic -->
+  <script>
+    const typeSelect = document.getElementById('typeSelect');
+    const numberSelect = document.getElementById('numberSelect');
+    const colorSelect = document.getElementById('colorSelect');
+    const preview = document.getElementById('preview');
+    const previewImage = document.getElementById('previewImage');
+    const previewText = document.getElementById('previewText');
+    const sizeContainer = document.getElementById('sizeContainer');
+
+    let selectedProduct = null;
+    let currentCategory = 'Mens';
+
+    // Initialize Dropdowns
+    const types = [...new Set(products.map(p => p.type))];
+    types.forEach(type => {
+      const opt = document.createElement('option');
+      opt.value = type;
+      opt.textContent = type;
+      typeSelect.appendChild(opt);
+    });
+
+    typeSelect.addEventListener('change', () => {
+      numberSelect.innerHTML = '<option value="">Select Kurta Number</option>';
+      const selectedType = typeSelect.value;
+      const filtered = products.filter(p => p.type === selectedType);
+      [...new Set(filtered.map(p => p.number))].forEach(num => {
+        const opt = document.createElement('option');
+        opt.value = num;
+        opt.textContent = num;
+        numberSelect.appendChild(opt);
+      });
+    });
+
+    numberSelect.addEventListener('change', () => {
+      colorSelect.innerHTML = '<option value="">Select Kurta Color</option>';
+      const filtered = products.filter(p => p.type === typeSelect.value && p.number === numberSelect.value);
+      filtered.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.color;
+        opt.textContent = p.color;
+        colorSelect.appendChild(opt);
+      });
+    });
+
+    colorSelect.addEventListener('change', () => {
+      const found = products.find(p =>
+        p.type === typeSelect.value &&
+        p.number === numberSelect.value &&
+        p.color === colorSelect.value
+      );
+      if (found) {
+        selectedProduct = found;
+        const imgPath = `Catlogue_icon/${found.type}-page-${found.page}.jpg`;
+        previewImage.src = imgPath;
+        previewText.textContent = `Preview: ${found.type} #${found.number} (${found.color})`;
+        preview.classList.remove('hidden');
+        showSizes();
+      }
+    });
+
+    function showCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+      event.target.classList.add('active-tab');
+      showSizes();
+    }
+
+    function showSizes() {
+      if (!selectedProduct) return;
+      sizeContainer.innerHTML = '';
+      const sizes = selectedProduct.pricing[currentCategory];
+      if (!sizes) {
+        sizeContainer.innerHTML = '<p class="text-sm text-center text-gray-500">No sizes available</p>';
+        return;
+      }
+
+      for (const size in sizes) {
+        const price = sizes[size]['Discount Price'];
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label class="flex items-center justify-between p-2 border rounded">
+            <span>${size} – ₹${price}</span>
+            <input type="number" min="0" placeholder="Qty" class="w-16 p-1 border rounded" data-size="${size}">
+          </label>
+        `;
+        sizeContainer.appendChild(div);
+      }
+    }
+
+    function generateMessage() {
+      if (!selectedProduct) return alert("Please select product first.");
+
+      let msg = `🧥 Product: ${selectedProduct.type} #${selectedProduct.number} – ${selectedProduct.color}\n\n`;
+
+      for (const category of ['Mens', 'Ladies', 'Kids']) {
+        const sizes = selectedProduct.pricing[category];
+        if (!sizes) continue;
+        let catMsg = '';
+        for (const size in sizes) {
+          const input = document.querySelector(`input[data-size="${size}"]`);
+          if (input && parseInt(input.value) > 0) {
+            catMsg += `${size} – ${input.value}, `;
+          }
+        }
+        if (catMsg) {
+          msg += (category === 'Mens' ? '👨‍🦱 MEN' : category === 'Ladies' ? '👩 LADIES' : '👶 KIDS') + ":\n" + catMsg.slice(0, -2) + "\n\n";
+        }
+      }
+
+      msg += `👥 Group Name: ${groupName.value}\n🏠 Address: ${address.value}\n📞 Contact Number: ${contact.value}`;
+      document.getElementById('output').value = msg;
+    }
+  </script>
 </body>
 </html>
