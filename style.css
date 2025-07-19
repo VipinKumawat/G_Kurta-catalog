@@ -1,121 +1,121 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f9f9f9;
   margin: 0;
   padding: 0;
-  color: #333;
-}
-
-header {
-  background-color: #1f2937;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: bold;
+  background: #f6f6f6;
+  color: #222;
 }
 
 .container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
+h1 {
+  text-align: center;
+  color: #bb2d3b;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
-.filters select,
-.filters input {
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.product-grid {
+.form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.product-card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.2s;
-}
-
-.product-card:hover {
-  transform: translateY(-4px);
-}
-
-.product-card img {
-  max-width: 100%;
-  border-radius: 6px;
-  margin-bottom: 10px;
-}
-
-.product-card h3 {
-  margin: 8px 0 4px;
-  font-size: 16px;
+.form-grid label {
   font-weight: bold;
+  margin-top: 8px;
 }
 
-.product-card p {
-  font-size: 14px;
-  color: #555;
-  margin: 2px 0;
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-.product-card button {
-  margin-top: 10px;
-  padding: 8px 12px;
+textarea {
+  resize: vertical;
+}
+
+.size-section {
+  margin-top: 2rem;
+  background: #fffbe6;
+  border: 1px solid #e5cb00;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.size-section h2 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  color: #614700;
+}
+
+.card {
+  margin-top: 2rem;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: #f9f9ff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.preview-bg {
+  position: relative;
+  background: url('bg/ganpati.jpg') no-repeat center center / cover;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.preview-bg img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+#orderText {
+  white-space: pre-wrap;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
   font-size: 14px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #22c55e;
+}
+
+button[type="submit"] {
+  margin-top: 20px;
+  background-color: #bb2d3b;
   color: white;
-  transition: background-color 0.3s;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease;
 }
 
-.product-card button:hover {
-  background-color: #16a34a;
+button[type="submit"]:hover {
+  background-color: #a3222f;
 }
 
-.order-btn {
-  background-color: #3b82f6;
-  margin-top: 6px;
-}
-
-.order-btn:hover {
-  background-color: #2563eb;
-}
-
-@media screen and (max-width: 600px) {
-  header {
-    font-size: 1rem;
-  }
-
-  .filters {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .product-card h3 {
-    font-size: 14px;
-  }
-
-  .product-card p {
-    font-size: 12px;
-  }
+.whatsapp-btn {
+  display: inline-block;
+  background-color: #25d366;
+  color: white;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+  width: 100%;
 }
