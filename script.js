@@ -1,109 +1,150 @@
-let productData = [];
-let currentProduct = null;
+let products = [];
 
-const typeSelect = document.getElementById("typeSelect");
-const colorSelect = document.getElementById("colorSelect");
-const sizeSelect = document.getElementById("sizeSelect");
-const quantityInput = document.getElementById("quantityInput");
-const priceDisplay = document.getElementById("priceDisplay");
-const pdfPreview = document.getElementById("pdfPreview");
-const orderList = document.getElementById("orderList");
+window.onload = async () => {
+  const res = await fetch('products.json');
+  products = await res.json();
 
-fetch('products.json')
-  .then(response => response.json())
-  .then(data => {
-    productData = data;
-    populateTypes();
-    typeSelect.dispatchEvent(new Event("change"));
-  })
-  .catch(error => console.error("Error loading products.json:", error));
+  populateDropdowns();
+  setupSizeInputs();
+};
 
-function populateTypes() {
-  const types = [...new Set(productData.map(p => p.type))];
-  typeSelect.innerHTML = "";
+function populateDropdowns() {
+  const typeSelect = document.getElementById('typeSelect');
+  const colorSelect = document.getElementById('colorSelect');
+  const pageSelect = document.getElementById('pageSelect');
+  const pdfSelect = document.getElementById('pdfSelect');
+
+  // Type dropdown
+  const types = [...new Set(products.map(p => p.type))];
   types.forEach(type => {
-    const option = document.createElement("option");
-    option.value = type;
-    option.textContent = type;
-    typeSelect.appendChild(option);
+    const opt = document.createElement('option');
+    opt.value = type;
+    opt.textContent = type;
+    typeSelect.appendChild(opt);
   });
-}
 
-function populateColors(type) {
-  colorSelect.innerHTML = "";
-  const filtered = productData.filter(p => p.type === type);
-  filtered.forEach(p => {
-    const option = document.createElement("option");
-    option.value = p.id;
-    option.textContent = p.color;
-    colorSelect.appendChild(option);
-  });
-  if (filtered.length) {
-    updateProduct(filtered[0].id);
-  }
-}
+  // Event: Load image and populate related fields
+  typeSelect.addEventListener('change', () => {
+    const selectedType = typeSelect.value;
+    const filtered = products.filter(p => p.type === selectedType);
 
-function updateProduct(productId) {
-  currentProduct = productData.find(p => p.id === productId);
-  updateSizes();
-  updatePreview();
-  updatePrice();
-}
-
-function updateSizes() {
-  sizeSelect.innerHTML = "";
-  if (!currentProduct) return;
-
-  const categoryKeys = Object.keys(currentProduct.pricing);
-  categoryKeys.forEach(cat => {
-    const sizes = Object.keys(currentProduct.pricing[cat]);
-    sizes.forEach(size => {
-      const option = document.createElement("option");
-      option.value = `${cat}:${size}`;
-      option.textContent = `${cat} – ${size}`;
-      sizeSelect.appendChild(option);
+    // Color
+    colorSelect.innerHTML = '';
+    [...new Set(filtered.map(p => p.color))].forEach(color => {
+      const opt = document.createElement('option');
+      opt.value = color;
+      opt.textContent = color;
+      colorSelect.appendChild(opt);
     });
+
+    // Page
+    pageSelect.innerHTML = '';
+    [...new Set(filtered.map(p => p.page))].forEach(page => {
+      const opt = document.createElement('option');
+      opt.value = page;
+      opt.textContent = page;
+      pageSelect.appendChild(opt);
+    });
+
+    // PDF
+    pdfSelect.innerHTML = '';
+    [...new Set(filtered.map(p => p.pdf))].forEach(pdf => {
+      const opt = document.createElement('option');
+      opt.value = pdf;
+      opt.textContent = pdf;
+      pdfSelect.appendChild(opt);
+    });
+
+    updateImage();
   });
+
+  // Page change updates image
+  pageSelect.addEventListener('change', updateImage);
 }
 
-function updatePrice() {
-  const selected = sizeSelect.value;
-  if (!selected || !currentProduct) return;
+function updateImage() {
+  const type = document.getElementById('typeSelect').value;
+  const page = document.getElementById('pageSelect').value;
+  const img = document.getElementById('previewImage');
+  const imagePath = `Catlogue_icon/${type}-page-${page}.jpg`;
+  img.src = imagePath;
+  img.onerror = () => {
+    img.src = 'images/default.jpg';
+  };
+}
 
-  const [cat, size] = selected.split(":");
-  const price = currentProduct.pricing[cat][size];
-  if (price) {
-    priceDisplay.innerHTML = `MRP: ₹${price.MRP} | Discount: ₹${price["Discount Price"]}`;
-  } else {
-    priceDisplay.innerHTML = "Price not found.";
+function setupSizeInputs() {
+  const men = ['36', '38', '40', '42', '44'];
+  const ladies = ['S', 'M', 'L', 'XL'];
+  const kids = ['20', '22', '24', '26', '28'];
+
+  function createInputs(containerId, sizes) {
+    const container = document.getElementById(containerId);
+    sizes.forEach(size => {
+      const row = document.createElement('div');
+      row.className = 'size-row';
+      row.innerHTML = `
+        <label>${size}:</label>
+        <input type="number" min="0" data-size="${size}" />
+        <input type="number" min="0" data-price="${size}" placeholder="₹ Price" />
+      `;
+      container.appendChild(row);
+    });
   }
+
+  createInputs('menSizes', men);
+  createInputs('ladiesSizes', ladies);
+  createInputs('kidsSizes', kids);
 }
 
-function updatePreview() {
-  if (!currentProduct) return;
-  pdfPreview.src = `pdf/${currentProduct.pdf}#page=${currentProduct.page}`;
+function confirmOrder() {
+  const type = document.getElementById('typeSelect').value;
+  const color = document.getElementById('colorSelect').value;
+  const page = document.getElementById('pageSelect').value;
+  const pdf = document.getElementById('pdfSelect').value;
+
+  const groupName = document.getElementById('groupName').value;
+  const address = document.getElementById('deliveryAddress').value;
+  const contact = document.getElementById('contactNumber').value;
+  const orderDate = new Date().toLocaleDateString();
+
+  let totalQty = 0;
+  let totalAmt = 0;
+
+  function extractSizes(sectionId, title) {
+    const rows = document.getElementById(sectionId).querySelectorAll('.size-row');
+    let text = `\n\n${title}\n`;
+    rows.forEach(row => {
+      const qty = parseInt(row.querySelector('[data-size]').value) || 0;
+      const price = parseInt(row.querySelector('[data-price]').value) || 0;
+      if (qty > 0) {
+        totalQty += qty;
+        totalAmt += qty * price;
+        text += `${row.querySelector('label').textContent} – Qty: ${qty} – ₹${price} each\n`;
+      }
+    });
+    return text;
+  }
+
+  const menText = extractSizes('menSizes', '👨‍🦱 MEN\'S SIZES');
+  const ladiesText = extractSizes('ladiesSizes', '👩 LADIES SIZES');
+  const kidsText = extractSizes('kidsSizes', '👶 KIDS SIZES');
+
+  const summary = `✅ GROUP ORDER CONFIRMATION
+
+🧥 Product: ${type} Kurta – Color: ${color}
+📄 Catalogue: Page ${page} | File: ${pdf}
+${menText}${ladiesText}${kidsText}
+👥 Group Name: ${groupName}
+🏠 Delivery Address: ${address}
+📞 Contact Number: ${contact}
+
+🗓️ Order Date: ${orderDate}
+🧾 Total Pieces: ${totalQty}
+💰 Total Approx Amount: ₹${totalAmt}
+
+📦 Thanks for your group order!`;
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(summary)}`;
+  window.open(whatsappUrl, '_blank');
 }
-
-// Event Listeners
-typeSelect.addEventListener("change", () => {
-  populateColors(typeSelect.value);
-});
-
-colorSelect.addEventListener("change", () => {
-  updateProduct(colorSelect.value);
-});
-
-sizeSelect.addEventListener("change", updatePrice);
-
-document.getElementById("orderButton").addEventListener("click", () => {
-  const selected = sizeSelect.value;
-  if (!currentProduct || !selected) return;
-
-  const qty = parseInt(quantityInput.value);
-  const [cat, size] = selected.split(":");
-  const price = currentProduct.pricing[cat][size];
-
-  const listItem = document.createElement("li");
-  listItem.textContent = `${currentProduct.color} | ${cat} ${size} – Qty: ${qty} | ₹${price["Discount Price"] * qty}`;
-  orderList.appendChild(listItem);
-});
