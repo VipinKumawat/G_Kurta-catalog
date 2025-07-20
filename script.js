@@ -69,14 +69,14 @@ function updateImage() {
   const imagePath = `Catlogue_icon/${type}-page-${page}.jpg`;
   img.src = imagePath;
   img.onerror = () => {
-    img.src = 'images/default.jpg';
+    img.src = 'pluspont-logo.jpg';
   };
 }
 
 function setupSizeInputs() {
-  const men = ['36', '38', '40', '42', '44'];
-  const ladies = ['S', 'M', 'L', 'XL'];
-  const kids = ['20', '22', '24', '26', '28'];
+  const men = ['32','34','36', '38', '40', '42', '44','46','48'];
+  const ladies = ['S', 'M', 'L', 'XL','XXL','3Xl','4XL'];
+  const kids = ['20', '22', '24', '26', '28', '30'];
 
   function createInputs(containerId, sizes) {
     const container = document.getElementById(containerId);
