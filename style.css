@@ -1,59 +1,106 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  padding: 20px;
-  background: #f0f0f0;
-}
-
-.container {
-  background: white;
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
-}
-
-label {
-  display: block;
-  margin-top: 15px;
-}
-
-select, input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px;
-  width: 100%;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.product-preview {
-  margin-top: 20px;
-}
-
-.price-display {
-  margin-top: 10px;
-  font-weight: bold;
+  padding: 0;
+  background: #f8f9fa;
   color: #333;
 }
 
-#orderSummary {
-  margin-top: 30px;
-  background: #e9f9e9;
-  padding: 15px;
-  border-radius: 5px;
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #2a2a2a;
+  margin-top: 0;
+}
+
+.product-image {
+  display: block;
+  max-width: 240px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.selector {
+  margin-bottom: 20px;
+}
+
+.selector label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.selector select, input[type="text"], input[type="number"], textarea {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.group {
+  margin-top: 20px;
+}
+
+.group h3 {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  color: #444;
+}
+
+.size-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.size-inputs label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+button {
+  background: #25D366;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  margin: 30px auto 0;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #1ebf5b;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  .product-image {
+    max-width: 90%;
+  }
+
+  button {
+    width: 100%;
+  }
 }
