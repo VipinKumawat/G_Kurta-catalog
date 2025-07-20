@@ -69,7 +69,7 @@ function updateImage() {
   const imagePath = `Catlogue_icon/${type}-page-${page}.jpg`;
   img.src = imagePath;
   img.onerror = () => {
-    img.src = 'pluspont-logo.jpg';
+    img.src = 'pluspont-logo.png';
   };
 }
 
