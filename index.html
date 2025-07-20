@@ -3,37 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Order Kurta</title>
+  <title>Group Kurta Order</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>PLUSPOINT – Kurta Order</h1>
+    <h1>Group Kurta Order</h1>
 
-    <label>Type:</label>
-    <select id="typeSelect"></select>
-
-    <label>Color:</label>
-    <select id="colorSelect"></select>
-
-    <div class="product-preview">
-      <h3>Product Preview</h3>
-      <img id="imagePreview" src="Catlogue_icon/default.jpg" alt="Preview" />
-      <iframe id="pdfPreview" width="100%" height="400px" style="margin-top: 20px;"></iframe>
+    <!-- Image Preview -->
+    <div class="image-preview">
+      <img id="previewImage" src="images/default.jpg" alt="Product Preview" />
     </div>
 
-    <div id="sizeQtyContainer">
-      <!-- Dynamic table of size + quantity per category will go here -->
+    <!-- Selection Form -->
+    <div class="form-section">
+      <label>Kurta Type:</label>
+      <select id="typeSelect"></select>
+
+      <label>Color:</label>
+      <select id="colorSelect"></select>
+
+      <label>Page Number:</label>
+      <select id="pageSelect"></select>
+
+      <label>Catalogue File:</label>
+      <select id="pdfSelect"></select>
     </div>
 
-    <div class="price-display" id="priceDisplay"></div>
+    <!-- Quantity Entry -->
+    <div class="qty-section">
+      <h3>👨‍🦱 Men's Sizes</h3>
+      <div id="menSizes"></div>
 
-    <button id="orderButton">Add to Order</button>
+      <h3>👩 Ladies Sizes</h3>
+      <div id="ladiesSizes"></div>
 
-    <div id="orderSummary">
-      <h2>Order Summary</h2>
-      <ul id="orderList"></ul>
+      <h3>👶 Kids Sizes</h3>
+      <div id="kidsSizes"></div>
     </div>
+
+    <!-- Customer Info -->
+    <div class="customer-section">
+      <label>Group Name:</label>
+      <input type="text" id="groupName" />
+
+      <label>Delivery Address:</label>
+      <textarea id="deliveryAddress"></textarea>
+
+      <label>Contact Number:</label>
+      <input type="text" id="contactNumber" />
+    </div>
+
+    <!-- Confirm Button -->
+    <button onclick="confirmOrder()">✅ Confirm Group Order</button>
   </div>
 
   <script src="script.js"></script>
