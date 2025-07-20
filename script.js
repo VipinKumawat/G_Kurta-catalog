@@ -148,3 +148,57 @@ ${menText}${ladiesText}${kidsText}
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(summary)}`;
   window.open(whatsappUrl, '_blank');
 }
+function generateOrderSummary(product) {
+  let summary = `✅ GROUP ORDER CONFIRMATION\n\n`;
+  summary += `🧥 Product: ${product.type} Kurta – No. ${product.number} – ${product.color}\n`;
+  summary += `📄 Catalogue: Page ${product.page} | File: ${product.pdf}\n\n`;
+
+  const groups = ["Mens", "Ladies", "Kids"];
+  let totalPieces = 0;
+  let totalAmount = 0;
+
+  groups.forEach(group => {
+    const groupInputs = document.querySelectorAll(`#${group.toLowerCase()} input[type="number"]`);
+    let groupSection = "";
+    groupInputs.forEach(input => {
+      const qty = parseInt(input.value);
+      if (!isNaN(qty) && qty > 0) {
+        const size = input.name;
+        const price = product.pricing[group][size]["Discount Price"];
+        const subtotal = price * qty;
+        totalPieces += qty;
+        totalAmount += subtotal;
+        groupSection += `${size} – Qty: ${qty} – ₹${price} each\n`;
+      }
+    });
+
+    if (groupSection !== "") {
+      summary += (group === "Mens" ? "👨‍🦱" : group === "Ladies" ? "👩" : "👶") + ` ${group.toUpperCase()} SIZES\n` + groupSection + "\n";
+    }
+  });
+
+  const groupName = document.getElementById("groupName").value;
+  const address = document.getElementById("address").value;
+  const phone = document.getElementById("phone").value;
+
+  summary += `👥 Group Name: ${groupName}\n`;
+  summary += `🏠 Delivery Address: ${address}\n`;
+  summary += `📞 Contact Number: ${phone}\n\n`;
+  summary += `🗓️ Order Date: ${new Date().toLocaleDateString("en-IN")}\n`;
+  summary += `🧾 Total Pieces: ${totalPieces}\n`;
+  summary += `💰 Total Approx Amount: ₹${totalAmount}\n\n`;
+  summary += `📦 Thanks for your group order!`;
+
+  return encodeURIComponent(summary);
+}
+
+document.getElementById("submitOrder").addEventListener("click", () => {
+  const selectedProduct = products.find(p => p.id === document.getElementById("productId").value);
+  if (!selectedProduct) {
+    alert("Please select a product first.");
+    return;
+  }
+  const message = generateOrderSummary(selectedProduct);
+  const whatsappURL = `https://wa.me/?text=${message}`;
+  window.open(whatsappURL, "_blank");
+});
