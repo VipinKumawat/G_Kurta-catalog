@@ -263,8 +263,8 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
 
   // Construct the final WhatsApp message
   let finalWhatsappMessage = `Hi! I want to place a group order for:\n\n`;
-  finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n`;
-  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n`;
+  finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n\n`;
+  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n\n`;
   finalWhatsappMessage += summaries.whatsapp; // Add the dynamic order summary
   finalWhatsappMessage += `\n\n*👥 Group Name:* ${groupName}`;
   finalWhatsappMessage += `\n*🏠 Delivery Address:* ${address}`;
