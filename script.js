@@ -76,7 +76,7 @@ function updateImageAndPricing() {
   filteredProduct = products.find(p => p.type === type && p.color === color);
 
   if (filteredProduct) {
-    const imagePath = `Catlogue_icon/${filteredProduct.type.toLowerCase()}-page-${filteredProduct.page}.jpg`;
+    const imagePath = `Catlogue_icon/${filteredProduct.type}-page-${filteredProduct.page}.jpg`;
     img.src = imagePath;
     img.onerror = () => {
       img.src = 'pluspont-logo.png'; // Fallback image if actual image not found
@@ -198,13 +198,14 @@ function showOrderSummary() {
         htmlSummary += `<h4>Category: ${category}</h4><table><thead><tr><th>Size</th><th>Qty</th><th>MRP (per)</th><th>Discount Price (per)</th><th>Line Total</th></tr></thead><tbody>`;
 
         // WhatsApp text for category
-        whatsappTextSummary += `*Category: ${category}*\n`;
+        whatsappTextSummary += `*Category: ${category}*\n  - Size  -  Qty  -  Price  -  Total\n\n `;
 
         selectedItemsByCategory[category].forEach(item => {
           // HTML for item row
           htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp.toFixed(2)}</td><td>₹${item.discountPrice.toFixed(2)}</td><td>₹${item.lineTotal.toFixed(2)}</td></tr>`;
           // WhatsApp text for item
-          whatsappTextSummary += `  - Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice.toFixed(2)} (Total: ₹${item.lineTotal.toFixed(2)})\n`;
+          whatsappTextSummary += `\n  -  ${item.size}  -  ${item.quantity}  -  ₹${item.discountPrice}  -  : ₹${item.lineTotal}\n `;
+          /*- Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice.toFixed(2)} (Total: ₹${item.lineTotal.toFixed(2)})\n`;*/
         });
 
         // Close HTML table for category
