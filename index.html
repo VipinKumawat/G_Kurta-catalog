@@ -10,52 +10,40 @@
   <div class="container">
     <h1>Group Kurta Order</h1>
 
-    <!-- Image Preview -->
+    <div class="form-section">
+      <label for="typeSelect">Kurta Type:</label>
+      <select id="typeSelect"></select>
+
+      <label for="colorSelect">Color:</label>
+      <select id="colorSelect"></select>
+    </div>
+
     <div class="image-preview">
       <img id="previewImage" src="Catlogue_icon/default.png" alt="Product Preview" />
     </div>
 
-    <!-- Selection Form -->
-    <div class="form-section">
-      <label>Kurta Type:</label>
-      <select id="typeSelect"></select>
-
-      <label>Color:</label>
-      <select id="colorSelect"></select>
-
-      <label>Page Number:</label>
-      <select id="pageSelect"></select>
-
-      <label>Catalogue File:</label>
-      <select id="pdfSelect"></select>
+    <div id="pricingOutputDiv" class="pricing-section">
+      <p>Please select a **Type** and **Color** to see pricing and sizes.</p>
     </div>
 
-    <!-- Quantity Entry -->
-    <div class="qty-section">
-      <h3>👨‍🦱 Men's Sizes</h3>
-      <div id="menSizes"></div>
+    <button id="orderSummaryButton" class="action-button">Show Order Summary</button>
 
-      <h3>👩 Ladies Sizes</h3>
-      <div id="ladiesSizes"></div>
+    <div id="orderSummaryOutput" class="summary-section">
+      </div>
 
-      <h3>👶 Kids Sizes</h3>
-      <div id="kidsSizes"></div>
-    </div>
-
-    <!-- Customer Info -->
     <div class="customer-section">
-      <label>Group Name:</label>
-      <input type="text" id="groupName" />
+      <h2>Your Details</h2>
+      <label for="groupName">Group Name:</label>
+      <input type="text" id="groupName" placeholder="Enter your Group Name" />
 
-      <label>Delivery Address:</label>
-      <textarea id="deliveryAddress"></textarea>
+      <label for="deliveryAddress">Delivery Address:</label>
+      <textarea id="deliveryAddress" rows="3" placeholder="Enter full delivery address"></textarea>
 
-      <label>Contact Number:</label>
-      <input type="text" id="contactNumber" />
+      <label for="contactNumber">Contact Number:</label>
+      <input type="tel" id="contactNumber" placeholder="Enter your contact number" />
     </div>
 
-    <!-- Confirm Button -->
-    <button onclick="confirmOrder()">✅ Confirm Group Order</button>
+    <button id="sendOrderWhatsapp" class="action-button primary-button">Send Order on WhatsApp</button>
   </div>
 
   <script src="script.js"></script>
