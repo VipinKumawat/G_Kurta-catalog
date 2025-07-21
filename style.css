@@ -76,12 +76,15 @@ textarea {
   resize: vertical;
   min-height: 80px; /* Slightly larger min-height */
 }
+/* ... (previous CSS code) ... */
 
 /* Image Preview */
 .image-preview {
   text-align: center;
   margin-bottom: 30px;
   background-color: #ffffff; /* White background for image area */
+  /* You might want to remove padding here if you want the image to span more */
+  padding: 10px; /* Reduced padding to give image more space if needed */
 }
 
 #previewImage {
@@ -89,9 +92,10 @@ textarea {
   height: auto;
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Soft shadow for image */
-  max-height: 400px; /* Limit image height */
+  max-height: 400px; /* <--- CHANGE THIS VALUE TO MAKE IT LARGER (e.g., 400px, 500px, etc.) */
   object-fit: contain; /* Ensure image fits without cropping */
 }
+
 
 /* Pricing Section - List View Fix */
 .pricing-section h3, .pricing-section h4 {
