@@ -1,18 +1,24 @@
 let products = [];
+let filteredProduct = null; // Will hold the single selected product
 
 window.onload = async () => {
   const res = await fetch('products.json');
   products = await res.json();
 
+  // Set default image on load
+  document.getElementById('previewImage').src = 'Catlogue_icon/default.png';
+
   populateDropdowns();
-  setupSizeInputs();
+  // No need for setupSizeInputs() as rendering is dynamic
 };
 
 function populateDropdowns() {
   const typeSelect = document.getElementById('typeSelect');
   const colorSelect = document.getElementById('colorSelect');
-  const pageSelect = document.getElementById('pageSelect');
-  const pdfSelect = document.getElementById('pdfSelect');
+
+  // Clear existing options
+  typeSelect.innerHTML = '<option value="">Select Type</option>';
+  colorSelect.innerHTML = '<option value="">Select Color</option>';
 
   // Type dropdown
   const types = [...new Set(products.map(p => p.type))];
@@ -23,182 +29,221 @@ function populateDropdowns() {
     typeSelect.appendChild(opt);
   });
 
-  // Event: Load image and populate related fields
+  // Event: When type changes, populate colors and update image
   typeSelect.addEventListener('change', () => {
     const selectedType = typeSelect.value;
-    const filtered = products.filter(p => p.type === selectedType);
+    const productsOfType = products.filter(p => p.type === selectedType);
 
     // Color
-    colorSelect.innerHTML = '';
-    [...new Set(filtered.map(p => p.color))].forEach(color => {
-      const opt = document.createElement('option');
-      opt.value = color;
-      opt.textContent = color;
-      colorSelect.appendChild(opt);
-    });
+    colorSelect.innerHTML = '<option value="">Select Color</option>'; // Reset color dropdown
+    if (selectedType) { // Only populate if a type is selected
+      [...new Set(productsOfType.map(p => p.color))].forEach(color => {
+        const opt = document.createElement('option');
+        opt.value = color;
+        opt.textContent = color;
+        colorSelect.appendChild(opt);
+      });
+    }
+    // Reset pricing and summary when type changes
+    document.getElementById('pricingOutputDiv').innerHTML = '';
+    document.getElementById('orderSummaryOutput').innerHTML = '';
+    filteredProduct = null; // Clear selected product
 
-    // Page
-    pageSelect.innerHTML = '';
-    [...new Set(filtered.map(p => p.page))].forEach(page => {
-      const opt = document.createElement('option');
-      opt.value = page;
-      opt.textContent = page;
-      pageSelect.appendChild(opt);
-    });
-
-    // PDF
-    pdfSelect.innerHTML = '';
-    [...new Set(filtered.map(p => p.pdf))].forEach(pdf => {
-      const opt = document.createElement('option');
-      opt.value = pdf;
-      opt.textContent = pdf;
-      pdfSelect.appendChild(opt);
-    });
-
-    updateImage();
+    updateImageAndPricing(); // Call to update image and pricing based on current selections
   });
 
-  // Page change updates image
-  pageSelect.addEventListener('change', updateImage);
+  // Event: When color changes, update image and pricing
+  colorSelect.addEventListener('change', () => {
+    updateImageAndPricing();
+  });
 }
 
-function updateImage() {
+function updateImageAndPricing() {
   const type = document.getElementById('typeSelect').value;
-  const page = document.getElementById('pageSelect').value;
+  const color = document.getElementById('colorSelect').value;
   const img = document.getElementById('previewImage');
-  const imagePath = `Catlogue_icon/${type}-page-${page}.jpg`;
-  img.src = imagePath;
-  img.onerror = () => {
-    img.src = 'pluspont-logo.png';
+  const pricingOutputDiv = document.getElementById('pricingOutputDiv');
+
+  // Find the exact product
+  filteredProduct = products.find(p => p.type === type && p.color === color);
+
+  if (filteredProduct) {
+    const imagePath = `Catlogue_icon/${filteredProduct.type}-page-${filteredProduct.page}.jpg`;
+    img.src = imagePath;
+    img.onerror = () => {
+      img.src = 'pluspont-logo.png'; // Fallback image
+    };
+    renderProductPricing(filteredProduct);
+  } else {
+    img.src = 'pluspont-logo.png'; // Fallback if no product matches
+    pricingOutputDiv.innerHTML = '<p>Please select both Type and Color to see product details and pricing.</p>';
+  }
+}
+
+function renderProductPricing(product) {
+  const pricingOutputDiv = document.getElementById('pricingOutputDiv');
+  if (!product || !product.pricing) {
+    pricingOutputDiv.innerHTML = '<p>No pricing available for this selection.</p>';
+    return;
+  }
+
+  let htmlContent = '<h3>Available Sizes & Pricing:</h3>';
+
+  for (const category in product.pricing) {
+    if (Object.hasOwnProperty.call(product.pricing, category)) {
+      htmlContent += `<h4>${category}'s:</h4><div class="category-sizes">`;
+      const sizes = product.pricing[category];
+
+      for (const size in sizes) {
+        if (Object.hasOwnProperty.call(sizes, size)) {
+          const pricing = sizes[size];
+          const mrp = pricing["MRP"] || 0;
+          const discountPrice = pricing["Discount Price"] || 0;
+
+          htmlContent += `
+            <div class="size-item">
+              <label>${size}:</label>
+              <input type="number" min="0" value="0"
+                     data-category="${category}"
+                     data-size="${size}"
+                     data-mrp="${mrp}"
+                     data-discount="${discountPrice}"
+                     class="qty-input"
+                     placeholder="Qty"/>
+              <span>MRP: ₹${mrp}</span>
+              <span>Discount: ₹${discountPrice}</span>
+            </div>
+          `;
+        }
+      }
+      htmlContent += `</div>`;
+    }
+  }
+  pricingOutputDiv.innerHTML = htmlContent;
+}
+
+function showOrderSummary() {
+  const orderSummaryOutput = document.getElementById('orderSummaryOutput');
+
+  if (!filteredProduct) {
+    orderSummaryOutput.innerHTML = '<p>Please select a product (Type and Color) first.</p>';
+    return { html: '<p>Please select a product first.</p>', whatsapp: 'Please select a product first.' };
+  }
+
+  const qtyInputs = document.querySelectorAll('#pricingOutputDiv .qty-input');
+  const selectedItemsByCategory = {};
+  let totalItems = 0;
+  let totalPrice = 0;
+
+  qtyInputs.forEach(input => {
+    const quantity = parseInt(input.value);
+
+    if (quantity > 0) {
+      const category = input.dataset.category;
+      const size = input.dataset.size;
+      const mrp = parseFloat(input.dataset.mrp);
+      const discountPrice = parseFloat(input.dataset.discount);
+
+      const itemDetails = {
+        size: size,
+        quantity: quantity,
+        mrp: mrp,
+        discountPrice: discountPrice,
+        lineTotal: quantity * discountPrice
+      };
+
+      if (!selectedItemsByCategory[category]) {
+        selectedItemsByCategory[category] = [];
+      }
+      selectedItemsByCategory[category].push(itemDetails);
+
+      totalItems += quantity;
+      totalPrice += (quantity * discountPrice);
+    }
+  });
+
+  let htmlSummary = '';
+  let whatsappTextSummary = '';
+
+  if (Object.keys(selectedItemsByCategory).length > 0) {
+    // --- Generate HTML Summary ---
+    htmlSummary += `<h3>Order Summary for ${filteredProduct.color} (${filteredProduct.type})</h3>`;
+
+    // --- Generate WhatsApp Text Summary (Header) ---
+    whatsappTextSummary += `*Order Summary for ${filteredProduct.color} (${filteredProduct.type})*\n\n`;
+
+    for (const category in selectedItemsByCategory) {
+      // HTML for category
+      htmlSummary += `<h4>Category: ${category}</h4><table><thead><tr><th>Size</th><th>Qty</th><th>MRP (per)</th><th>Discount Price (per)</th><th>Line Total</th></tr></thead><tbody>`;
+
+      // WhatsApp text for category
+      whatsappTextSummary += `*Category: ${category}*\n`;
+
+      selectedItemsByCategory[category].forEach(item => {
+        // HTML for item row
+        htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp.toFixed(2)}</td><td>₹${item.discountPrice.toFixed(2)}</td><td>₹${item.lineTotal.toFixed(2)}</td></tr>`;
+        // WhatsApp text for item
+        whatsappTextSummary += `  - Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice.toFixed(2)} (Total: ₹${item.lineTotal.toFixed(2)})\n`;
+      });
+
+      // Close HTML table for category
+      htmlSummary += `</tbody></table>`;
+      // Add a blank line for readability between categories in WhatsApp text
+      whatsappTextSummary += `\n`;
+    }
+
+    // --- Final HTML totals ---
+    htmlSummary += `<p><strong>Total Items:</strong> ${totalItems}</p><p><strong>Overall Total:</strong> ₹${totalPrice.toFixed(2)}</p>`;
+
+    // --- Final WhatsApp text totals ---
+    whatsappTextSummary += `*Total Items:* ${totalItems}\n`;
+    whatsappTextSummary += `*Overall Total:* ₹${totalPrice.toFixed(2)}`;
+
+  } else {
+    htmlSummary = '<p>No items selected for order. Please enter quantities.</p>';
+    whatsappTextSummary = 'No items selected for order. Please enter quantities.';
+  }
+
+  // Display HTML summary on the webpage
+  orderSummaryOutput.innerHTML = htmlSummary;
+
+  // Return both summaries
+  return {
+    html: htmlSummary,
+    whatsapp: whatsappTextSummary
   };
 }
 
-function setupSizeInputs() {
-  const men = ['32','34','36', '38', '40', '42', '44','46','48'];
-  const ladies = ['S', 'M', 'L', 'XL','XXL','3Xl','4XL'];
-  const kids = ['20', '22', '24', '26', '28', '30'];
+document.getElementById("orderSummaryButton").addEventListener("click", showOrderSummary);
 
-  function createInputs(containerId, sizes) {
-    const container = document.getElementById(containerId);
-    sizes.forEach(size => {
-      const row = document.createElement('div');
-      row.className = 'size-row';
-      row.innerHTML = `
-        <label>${size}:</label>
-        <input type="number" min="0" data-size="${size}" />
-        <input type="number" min="0" data-price="${size}" placeholder="₹ Price" />
-      `;
-      container.appendChild(row);
-    });
+document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
+  const summaries = showOrderSummary(); // First generate and display the summary
+
+  if (!filteredProduct) {
+    alert("Please select a product and enter quantities before sending to WhatsApp.");
+    return;
   }
-
-  createInputs('menSizes', men);
-  createInputs('ladiesSizes', ladies);
-  createInputs('kidsSizes', kids);
-}
-
-function confirmOrder() {
-  const type = document.getElementById('typeSelect').value;
-  const color = document.getElementById('colorSelect').value;
-  const page = document.getElementById('pageSelect').value;
-  const pdf = document.getElementById('pdfSelect').value;
 
   const groupName = document.getElementById('groupName').value;
   const address = document.getElementById('deliveryAddress').value;
   const contact = document.getElementById('contactNumber').value;
-  const orderDate = new Date().toLocaleDateString();
 
-  let totalQty = 0;
-  let totalAmt = 0;
-
-  function extractSizes(sectionId, title) {
-    const rows = document.getElementById(sectionId).querySelectorAll('.size-row');
-    let text = `\n\n${title}\n`;
-    rows.forEach(row => {
-      const qty = parseInt(row.querySelector('[data-size]').value) || 0;
-      const price = parseInt(row.querySelector('[data-price]').value) || 0;
-      if (qty > 0) {
-        totalQty += qty;
-        totalAmt += qty * price;
-        text += `${row.querySelector('label').textContent} – Qty: ${qty} – ₹${price} each\n`;
-      }
-    });
-    return text;
+  if (!groupName || !address || !contact) {
+      alert("Please fill in Group Name, Delivery Address, and Contact Number.");
+      return;
   }
 
-  const menText = extractSizes('menSizes', '👨‍🦱 MEN\'S SIZES');
-  const ladiesText = extractSizes('ladiesSizes', '👩 LADIES SIZES');
-  const kidsText = extractSizes('kidsSizes', '👶 KIDS SIZES');
 
-  const summary = `✅ GROUP ORDER CONFIRMATION
+  let finalWhatsappMessage = `Hi! I want to place a group order for:\n\n`;
+  finalWhatsappMessage += `🧥 Product: ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n\n`;
+  finalWhatsappMessage += summaries.whatsapp; // Add the dynamic order summary
+  finalWhatsappMessage += `\n\n👥 Group Name: ${groupName}`;
+  finalWhatsappMessage += `\n🏠 Delivery Address: ${address}`;
+  finalWhatsappMessage += `\n📞 Contact Number: ${contact}`;
+  finalWhatsappMessage += `\n\n🗓️ Order Date: ${new Date().toLocaleDateString("en-IN")}`;
+  finalWhatsappMessage += `\n\n📦 Thanks for your group order!`;
 
-🧥 Product: ${type} Kurta – Color: ${color}
-📄 Catalogue: Page ${page} | File: ${pdf}
-${menText}${ladiesText}${kidsText}
-👥 Group Name: ${groupName}
-🏠 Delivery Address: ${address}
-📞 Contact Number: ${contact}
 
-🗓️ Order Date: ${orderDate}
-🧾 Total Pieces: ${totalQty}
-💰 Total Approx Amount: ₹${totalAmt}
-
-📦 Thanks for your group order!`;
-
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(summary)}`;
-  window.open(whatsappUrl, '_blank');
-}
-function generateOrderSummary(product) {
-  let summary = `✅ GROUP ORDER CONFIRMATION\n\n`;
-  summary += `🧥 Product: ${product.type} Kurta – No. ${product.number} – ${product.color}\n`;
-  summary += `📄 Catalogue: Page ${product.page} | File: ${product.pdf}\n\n`;
-
-  const groups = ["Mens", "Ladies", "Kids"];
-  let totalPieces = 0;
-  let totalAmount = 0;
-
-  groups.forEach(group => {
-    const groupInputs = document.querySelectorAll(`#${group.toLowerCase()} input[type="number"]`);
-    let groupSection = "";
-    groupInputs.forEach(input => {
-      const qty = parseInt(input.value);
-      if (!isNaN(qty) && qty > 0) {
-        const size = input.name;
-        const price = product.pricing[group][size]["Discount Price"];
-        const subtotal = price * qty;
-        totalPieces += qty;
-        totalAmount += subtotal;
-        groupSection += `${size} – Qty: ${qty} – ₹${price} each\n`;
-      }
-    });
-
-    if (groupSection !== "") {
-      summary += (group === "Mens" ? "👨‍🦱" : group === "Ladies" ? "👩" : "👶") + ` ${group.toUpperCase()} SIZES\n` + groupSection + "\n";
-    }
-  });
-
-  const groupName = document.getElementById("groupName").value;
-  const address = document.getElementById("address").value;
-  const phone = document.getElementById("phone").value;
-
-  summary += `👥 Group Name: ${groupName}\n`;
-  summary += `🏠 Delivery Address: ${address}\n`;
-  summary += `📞 Contact Number: ${phone}\n\n`;
-  summary += `🗓️ Order Date: ${new Date().toLocaleDateString("en-IN")}\n`;
-  summary += `🧾 Total Pieces: ${totalPieces}\n`;
-  summary += `💰 Total Approx Amount: ₹${totalAmount}\n\n`;
-  summary += `📦 Thanks for your group order!`;
-
-  return encodeURIComponent(summary);
-}
-
-document.getElementById("submitOrder").addEventListener("click", () => {
-  const selectedProduct = products.find(p => p.id === document.getElementById("productId").value);
-  if (!selectedProduct) {
-    alert("Please select a product first.");
-    return;
-  }
-  const message = generateOrderSummary(selectedProduct);
-  const whatsappURL = `https://wa.me/?text=${message}`;
+  const whatsappURL = `https://wa.me/919722609460?text=${encodeURIComponent(finalWhatsappMessage)}`;
   window.open(whatsappURL, "_blank");
 });
