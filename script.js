@@ -76,7 +76,7 @@ function updateImageAndPricing() {
   filteredProduct = products.find(p => p.type === type && p.color === color);
 
   if (filteredProduct) {
-    const imagePath = `Catlogue_icon/${filteredProduct.type}-page-${filteredProduct.page}.jpg`;
+    const imagePath = `Catlogue_icon/${filteredProduct.type.toLowerCase()}-page-${filteredProduct.page}.jpg`;
     img.src = imagePath;
     img.onerror = () => {
       img.src = 'pluspont-logo.png'; // Fallback image if actual image not found
