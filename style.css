@@ -89,7 +89,7 @@ textarea {
   height: auto;
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Soft shadow for image */
-  max-height: 250px; /* Limit image height */
+  max-height: 400px; /* Limit image height */
   object-fit: contain; /* Ensure image fits without cropping */
 }
 
