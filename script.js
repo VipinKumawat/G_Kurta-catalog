@@ -131,7 +131,7 @@ function renderProductPricing(product) {
            data-discount="${discountPrice}"
            class="qty-input"
            placeholder="Qty"/>
-    <span class="mrp-price">MRP: ₹${mrp}</span>  <span class="discount-price">Discount: ₹${discountPrice}</span> </div>
+    <span class="mrp-price"> ₹${mrp}</span>  <span class="discount-price"> ₹${discountPrice}</span> </div>
 `;
 
       });
