@@ -121,20 +121,19 @@ function renderProductPricing(product) {
         const mrp = pricing["MRP"] || 0;
         const discountPrice = pricing["Discount Price"] || 0;
 
-        htmlContent += `
-          <div class="size-item">
-            <label>${size}:</label>
-            <input type="number" min="0" value="0"
-                   data-category="${category}"
-                   data-size="${size}"
-                   data-mrp="${mrp}"
-                   data-discount="${discountPrice}"
-                   class="qty-input"
-                   placeholder="Qty"/>
-            <span>MRP: ₹${mrp}</span>
-            <span>Discount: ₹${discountPrice}</span>
-          </div>
-        `;
+       htmlContent += `
+  <div class="size-item">
+    <label>${size}:</label>
+    <input type="number" min="0" value="0"
+           data-category="${category}"
+           data-size="${size}"
+           data-mrp="${mrp}"
+           data-discount="${discountPrice}"
+           class="qty-input"
+           placeholder="Qty"/>
+    <span class="mrp-price">MRP: ₹${mrp}</span>  <span class="discount-price">Discount: ₹${discountPrice}</span> </div>
+`;
+
       });
       htmlContent += `</div>`;
     }
