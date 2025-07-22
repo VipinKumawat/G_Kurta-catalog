@@ -139,18 +139,19 @@ textarea {
   color: #333;
 }
 
+
 .size-item input[type="number"] {
   flex-grow: 1; /* Allow input to grow */
-  max-width: 90px; /* Max width for quantity input */
+  max-width: 60px; /* <--- CHANGE THIS VALUE TO MAKE IT SMALLER (e.g., 60px, 50px, etc.) */
+  min-width: 40px; /* <--- ADD THIS to ensure it doesn't become too small on tiny screens */
   padding: 8px;
-  margin-bottom: 0; /* Reset default margin */
+  margin-bottom: 0;
   font-size: 15px;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-/* In your style.css */
 
 .size-item .mrp-price {
   text-decoration: line-through;
