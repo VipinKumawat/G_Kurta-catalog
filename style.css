@@ -58,7 +58,7 @@ label {
 select, input[type="text"], input[type="tel"], textarea {
   width: calc(100% - 22px); /* Account for padding and border */
   padding: 12px;
-  margin-bottom: 18px; /* More space between inputs */
+  margin-bottom: 12px; /* REDUCED: Was 18px, now 12px */
   border: 1px solid #b3d4f5; /* Light blue border for inputs */
   border-radius: 6px;
   box-sizing: border-box;
@@ -100,8 +100,8 @@ textarea {
 /* Pricing Section - List View Fix */
 .pricing-section h3, .pricing-section h4 {
   color: #007bff; /* Blue for sub-headings */
-  margin-top: 15px;
-  margin-bottom: 10px;
+  margin-top: 10px; /* REDUCED: Was 15px, now 10px */
+  margin-bottom: 8px; /* REDUCED: Was 10px, now 8px */
   font-size: 1.15em;
   border-bottom: 1px solid #e0e0e0; /* Separator for categories */
   padding-bottom: 5px;
@@ -112,17 +112,17 @@ textarea {
 
 .category-sizes {
   display: block; /* Forces children to stack vertically */
-  margin-bottom: 15px; /* Space after each category block */
+  margin-bottom: 10px; /* REDUCED: Was 15px, now 10px */
   padding: 0;
 }
 
 .size-item {
   display: flex; /* Keeps label, input, and spans inline */
   align-items: center; /* Vertically align content */
-  gap: 15px; /* Increased space between elements within a row */
-  padding: 10px 0; /* Vertical padding for each item */
+  gap: 10px; /* REDUCED: Was 15px, now 10px */
+  padding: 6px 0; /* REDUCED: Was 10px, now 6px (Vertical padding for each item) */
   border-bottom: 1px dashed #e6e6e6; /* Lighter dashed separator */
-  margin-bottom: 5px; /* Space between each size-item */
+  margin-bottom: 2px; /* REDUCED: Was 5px, now 2px (Space between each size-item) */
   background-color: #ffffff; /* White background for individual items */
 }
 
@@ -132,7 +132,7 @@ textarea {
 
 .size-item label {
   flex-shrink: 0; /* Prevent label from shrinking */
-  width: 60px; /* Fixed width for labels for better alignment */
+  width: 50px; /* REDUCED: Was 60px, now 50px (Fixed width for labels for better alignment) */
   text-align: right; /* Align label text to the right */
   margin-right: 0; /* Reset default margin */
   font-weight: normal; /* Labels within item should not be bold */
@@ -142,11 +142,11 @@ textarea {
 
 .size-item input[type="number"] {
   flex-grow: 1; /* Allow input to grow */
-  max-width: 60px; /* <--- CHANGE THIS VALUE TO MAKE IT SMALLER (e.g., 60px, 50px, etc.) */
-  min-width: 40px; /* <--- ADD THIS to ensure it doesn't become too small on tiny screens */
-  padding: 8px;
+  max-width: 50px; /* REDUCED: Was 60px, now 50px */
+  min-width: 40px;
+  padding: 6px; /* REDUCED: Was 8px, now 6px */
   margin-bottom: 0;
-  font-size: 15px;
+  font-size: 14px; /* SLIGHTLY REDUCED: Was 15px, now 14px */
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -156,12 +156,14 @@ textarea {
 .size-item .mrp-price {
   text-decoration: line-through;
   color: #888; /* Make it slightly lighter to indicate it's not the final price */
-  margin-right: 10px; /* Add some space between MRP and Discount price */
+  margin-right: 8px; /* REDUCED: Was 10px, now 8px */
+  font-size: 0.9em; /* SLIGHTLY REDUCED */
 }
 
 .size-item .discount-price {
   font-weight: bold; /* Make the discount price stand out */
   color: #28a745; /* Green color for the final price */
+  font-size: 0.95em; /* SLIGHTLY REDUCED */
 }
 
 /* Adjust the .size-item span rule if needed */
