@@ -98,7 +98,7 @@ function renderProductPricing(product) {
   let htmlContent = '<h3>Available Sizes & Pricing:</h3>';
 
   // Define a consistent order for categories if desired, otherwise loop directly
-  const categoriesOrder = ['Kids', 'Mens', 'Ladies'];
+  const categoriesOrder = [ 'Mens', 'Ladies', 'Kids'];
   
   categoriesOrder.forEach(category => {
     if (Object.hasOwnProperty.call(product.pricing, category)) {
