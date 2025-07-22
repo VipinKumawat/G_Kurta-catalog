@@ -58,7 +58,7 @@ label {
 select, input[type="text"], input[type="tel"], textarea {
   width: calc(100% - 22px); /* Account for padding and border */
   padding: 12px;
-  margin-bottom: 12px; /* REDUCED: Was 18px, now 12px */
+  margin-bottom: 12px; /* REDUCED for compactness */
   border: 1px solid #b3d4f5; /* Light blue border for inputs */
   border-radius: 6px;
   box-sizing: border-box;
@@ -76,14 +76,12 @@ textarea {
   resize: vertical;
   min-height: 80px; /* Slightly larger min-height */
 }
-/* ... (previous CSS code) ... */
 
 /* Image Preview */
 .image-preview {
   text-align: center;
   margin-bottom: 30px;
   background-color: #ffffff; /* White background for image area */
-  /* You might want to remove padding here if you want the image to span more */
   padding: 10px; /* Reduced padding to give image more space if needed */
 }
 
@@ -100,8 +98,8 @@ textarea {
 /* Pricing Section - List View Fix */
 .pricing-section h3, .pricing-section h4 {
   color: #007bff; /* Blue for sub-headings */
-  margin-top: 10px; /* REDUCED: Was 15px, now 10px */
-  margin-bottom: 8px; /* REDUCED: Was 10px, now 8px */
+  margin-top: 10px; /* REDUCED for compactness */
+  margin-bottom: 8px; /* REDUCED for compactness */
   font-size: 1.15em;
   border-bottom: 1px solid #e0e0e0; /* Separator for categories */
   padding-bottom: 5px;
@@ -112,27 +110,35 @@ textarea {
 
 .category-sizes {
   display: block; /* Forces children to stack vertically */
-  margin-bottom: 10px; /* REDUCED: Was 15px, now 10px */
+  margin-bottom: 10px; /* REDUCED for compactness */
   padding: 0;
 }
 
 .size-item {
   display: flex; /* Keeps label, input, and spans inline */
   align-items: center; /* Vertically align content */
-  gap: 10px; /* REDUCED: Was 15px, now 10px */
-  padding: 6px 0; /* REDUCED: Was 10px, now 6px (Vertical padding for each item) */
-  border-bottom: 1px dashed #e6e6e6; /* Lighter dashed separator */
-  margin-bottom: 2px; /* REDUCED: Was 5px, now 2px (Space between each size-item) */
+  gap: 10px; /* REDUCED for compactness */
+  padding: 6px 0; /* REDUCED for compactness (Vertical padding for each item) */
+  border-bottom: 1px solid #eeeeee; /* POLISH: Lighter solid line instead of dashed */
+  margin-bottom: 2px; /* REDUCED for compactness (Space between each size-item) */
   background-color: #ffffff; /* White background for individual items */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* POLISH: Smooth transition for hover */
 }
 
 .size-item:last-child {
   border-bottom: none; /* No border for the last item in a category */
 }
 
+/* POLISH: Hover effect for size-item */
+.size-item:hover {
+  background-color: #f0f7ff; /* Very light blue on hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow on hover */
+}
+
+
 .size-item label {
   flex-shrink: 0; /* Prevent label from shrinking */
-  width: 50px; /* REDUCED: Was 60px, now 50px (Fixed width for labels for better alignment) */
+  width: 50px; /* REDUCED for compactness */
   text-align: right; /* Align label text to the right */
   margin-right: 0; /* Reset default margin */
   font-weight: normal; /* Labels within item should not be bold */
@@ -142,11 +148,11 @@ textarea {
 
 .size-item input[type="number"] {
   flex-grow: 1; /* Allow input to grow */
-  max-width: 50px; /* REDUCED: Was 60px, now 50px */
+  max-width: 50px; /* REDUCED for compactness */
   min-width: 40px;
-  padding: 6px; /* REDUCED: Was 8px, now 6px */
+  padding: 6px; /* REDUCED for compactness */
   margin-bottom: 0;
-  font-size: 14px; /* SLIGHTLY REDUCED: Was 15px, now 14px */
+  font-size: 14px; /* SLIGHTLY REDUCED for compactness */
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -156,14 +162,14 @@ textarea {
 .size-item .mrp-price {
   text-decoration: line-through;
   color: #888; /* Make it slightly lighter to indicate it's not the final price */
-  margin-right: 8px; /* REDUCED: Was 10px, now 8px */
-  font-size: 0.9em; /* SLIGHTLY REDUCED */
+  margin-right: 8px; /* REDUCED for compactness */
+  font-size: 0.9em; /* SLIGHTLY REDUCED for compactness */
 }
 
 .size-item .discount-price {
   font-weight: bold; /* Make the discount price stand out */
   color: #28a745; /* Green color for the final price */
-  font-size: 0.95em; /* SLIGHTLY REDUCED */
+  font-size: 0.95em; /* SLIGHTLY REDUCED for compactness */
 }
 
 /* Adjust the .size-item span rule if needed */
