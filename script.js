@@ -278,6 +278,6 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
   finalWhatsappMessage += `\n\n📦 Thanks for your group order!`;
 
   // Open WhatsApp with the pre-filled message
-  const whatsappURL = `https://wa.me/91${contact}?text=${encodeURIComponent(finalWhatsappMessage)}`;
+  const whatsappURL = `https://wa.me/918866244409?text=${encodeURIComponent(finalWhatsappMessage)}`;
   window.open(whatsappURL, "_blank");
 });
