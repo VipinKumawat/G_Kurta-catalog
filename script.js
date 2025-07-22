@@ -1,4 +1,4 @@
-let products = [];
+VR let products = [];
 let filteredProduct = null; // Will hold the single selected product
 
 window.onload = async () => {
@@ -189,8 +189,8 @@ function showOrderSummary() {
     // --- Generate HTML Summary ---
     htmlSummary += `<h3>Order Summary for ${filteredProduct.color} (${filteredProduct.type})</h3>`;
 
-    // Ensure categories are listed in a consistent order (Kids, Mens, Ladies)
-    const categoriesOrder = ['Kids', 'Mens', 'Ladies'];
+    // Ensure categories are listed in a consistent order ( Mens, Ladies, Kids)
+    const categoriesOrder = [ 'Mens', 'Ladies','Kids'];
     categoriesOrder.forEach(category => {
       if (selectedItemsByCategory[category] && selectedItemsByCategory[category].length > 0) {
         // HTML for category
@@ -201,10 +201,10 @@ function showOrderSummary() {
 
         selectedItemsByCategory[category].forEach(item => {
           // HTML for item row
-          htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp.toFixed(2)}</td><td>₹${item.discountPrice.toFixed(2)}</td><td>₹${item.lineTotal.toFixed(2)}</td></tr>`;
+          htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp}</td><td>₹${item.discountPrice}</td><td>₹${item.lineTotal}</td></tr>`;
           // WhatsApp text for item
           whatsappTextSummary += `\n  -  ${item.size}  -  ${item.quantity}  -  ~₹${item.mrp}~  -  ₹${item.discountPrice}  -  : ₹${item.lineTotal}\n `;
-          /*- Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice.toFixed(2)} (Total: ₹${item.lineTotal.toFixed(2)})\n`;*/
+          /*- Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice} (Total: ₹${item.lineTotal})\n`;*/
         });
 
         // Close HTML table for category
@@ -222,7 +222,7 @@ function showOrderSummary() {
 
     // --- Final WhatsApp text totals ---
     whatsappTextSummary += `*Total Items:* ${totalItems}\n`;
-    whatsappTextSummary += `*Overall Total:* ₹${totalPrice.toFixed(2)}`;
+    whatsappTextSummary += `*Overall Total:* ₹${totalPrice}`;
 
   } else {
     htmlSummary = '<p>No items selected for order. Please enter quantities.</p>';
