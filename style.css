@@ -150,13 +150,26 @@ textarea {
   border-radius: 4px;
 }
 
-.size-item span {
-  flex-shrink: 0; /* Prevent price spans from shrinking */
-  font-size: 0.95em;
-  color: #555;
-  white-space: nowrap; /* Keep price text on one line */
-  margin-left: 5px; /* Space between input and pricing */
+/* In your style.css */
+
+.size-item .mrp-price {
+  text-decoration: line-through;
+  color: #888; /* Make it slightly lighter to indicate it's not the final price */
+  margin-right: 10px; /* Add some space between MRP and Discount price */
 }
+
+.size-item .discount-price {
+  font-weight: bold; /* Make the discount price stand out */
+  color: #28a745; /* Green color for the final price */
+}
+
+/* Adjust the .size-item span rule if needed */
+.size-item span {
+  /* Remove or adjust any conflicting styles here if they are too general */
+  /* For example, if you had color: #666 here, it would apply to both */
+  /* Specific classes .mrp-price and .discount-price will override more general rules */
+}
+
 
 /* Buttons */
 .action-button {
