@@ -260,18 +260,24 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
       return;
   }
 
+  const mobileRegex = /^\d{10}$/; 
+  if (mobileRegex.test(contact)) {
+ alert("Please Enter Valid Contact Number before sending the order.");
+      return;
+  }
+
   // Construct the final WhatsApp message
   let finalWhatsappMessage = `Hi! I want to place a group order for:\n\n`;
   finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n\n`;
   finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n\n`;
   finalWhatsappMessage += summaries.whatsapp; // Add the dynamic order summary
   finalWhatsappMessage += `\n\n*👥 Group Name:* ${groupName}`;
-  finalWhatsappMessage += `\n*🏠 Delivery Address:* ${address}`;
+  finalWhatsappMessage += `\n*🏠 Address:* ${address}`;
   finalWhatsappMessage += `\n*📞 Contact Number:* ${contact}`;
   finalWhatsappMessage += `\n\n*🗓️ Order Date:* ${new Date().toLocaleDateString("en-IN")}`; // Format date for India
   finalWhatsappMessage += `\n\n📦 Thanks for your group order!`;
 
   // Open WhatsApp with the pre-filled message
-  const whatsappURL = `https://wa.me/919722609460?text=${encodeURIComponent(finalWhatsappMessage)}`;
+  const whatsappURL = `https://wa.me/91${contact}?text=${encodeURIComponent(finalWhatsappMessage)}`;
   window.open(whatsappURL, "_blank");
 });
