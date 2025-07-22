@@ -197,7 +197,7 @@ function showOrderSummary() {
         htmlSummary += `<h4>Category: ${category}</h4><table><thead><tr><th>Size</th><th>Qty</th><th>MRP (per)</th><th>Discount Price (per)</th><th>Line Total</th></tr></thead><tbody>`;
 
         // WhatsApp text for category
-        whatsappTextSummary += `*Category: ${category}*\n  - Size  -  Qty  -  Price  -  Total\n `;
+        whatsappTextSummary += `*Category: ${category}*\n\n  - Size  -  Qty  -  Price  -  Total\n `;
 
         selectedItemsByCategory[category].forEach(item => {
           // HTML for item row
