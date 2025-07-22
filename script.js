@@ -1,4 +1,4 @@
-VR let products = [];
+let products = [];
 let filteredProduct = null; // Will hold the single selected product
 
 window.onload = async () => {
