@@ -43,7 +43,7 @@ h2, h3, h4 {
   margin-bottom: 25px;
   padding: 20px;
   border: 1px solid #d1e0ed; /* Lighter, subtle border */
-  border-radius: 8px;
+  border-radius: 8px; /* Consistent border-radius */
   background-color: #f8faff; /* Very light blue background for sections */
 }
 
@@ -58,7 +58,7 @@ label {
 select, input[type="text"], input[type="tel"], textarea {
   width: calc(100% - 22px); /* Account for padding and border */
   padding: 12px;
-  margin-bottom: 12px; /* REDUCED for compactness */
+  margin-bottom: 12px; /* Reduced for compactness */
   border: 1px solid #b3d4f5; /* Light blue border for inputs */
   border-radius: 6px;
   box-sizing: border-box;
@@ -95,11 +95,11 @@ textarea {
 }
 
 
-/* Pricing Section - List View Fix */
+/* Pricing Section - List View Fix (Compactness & Polish) */
 .pricing-section h3, .pricing-section h4 {
   color: #007bff; /* Blue for sub-headings */
-  margin-top: 10px; /* REDUCED for compactness */
-  margin-bottom: 8px; /* REDUCED for compactness */
+  margin-top: 10px; /* Reduced for compactness */
+  margin-bottom: 8px; /* Reduced for compactness */
   font-size: 1.15em;
   border-bottom: 1px solid #e0e0e0; /* Separator for categories */
   padding-bottom: 5px;
@@ -110,17 +110,17 @@ textarea {
 
 .category-sizes {
   display: block; /* Forces children to stack vertically */
-  margin-bottom: 10px; /* REDUCED for compactness */
+  margin-bottom: 10px; /* Reduced for compactness */
   padding: 0;
 }
 
 .size-item {
   display: flex; /* Keeps label, input, and spans inline */
   align-items: center; /* Vertically align content */
-  gap: 10px; /* REDUCED for compactness */
-  padding: 6px 0; /* REDUCED for compactness (Vertical padding for each item) */
+  gap: 10px; /* Reduced for compactness */
+  padding: 6px 0; /* Reduced for compactness (Vertical padding for each item) */
   border-bottom: 1px solid #eeeeee; /* POLISH: Lighter solid line instead of dashed */
-  margin-bottom: 2px; /* REDUCED for compactness (Space between each size-item) */
+  margin-bottom: 2px; /* Reduced for compactness (Space between each size-item) */
   background-color: #ffffff; /* White background for individual items */
   transition: background-color 0.2s ease, box-shadow 0.2s ease; /* POLISH: Smooth transition for hover */
 }
@@ -138,7 +138,7 @@ textarea {
 
 .size-item label {
   flex-shrink: 0; /* Prevent label from shrinking */
-  width: 50px; /* REDUCED for compactness */
+  width: 50px; /* Reduced for compactness */
   text-align: right; /* Align label text to the right */
   margin-right: 0; /* Reset default margin */
   font-weight: normal; /* Labels within item should not be bold */
@@ -148,9 +148,9 @@ textarea {
 
 .size-item input[type="number"] {
   flex-grow: 1; /* Allow input to grow */
-  max-width: 50px; /* REDUCED for compactness */
+  max-width: 50px; /* Reduced for compactness */
   min-width: 40px;
-  padding: 6px; /* REDUCED for compactness */
+  padding: 6px; /* Reduced for compactness */
   margin-bottom: 0;
   font-size: 14px; /* SLIGHTLY REDUCED for compactness */
   text-align: center;
@@ -162,7 +162,7 @@ textarea {
 .size-item .mrp-price {
   text-decoration: line-through;
   color: #888; /* Make it slightly lighter to indicate it's not the final price */
-  margin-right: 8px; /* REDUCED for compactness */
+  margin-right: 8px; /* Reduced for compactness */
   font-size: 0.9em; /* SLIGHTLY REDUCED for compactness */
 }
 
@@ -172,10 +172,7 @@ textarea {
   font-size: 0.95em; /* SLIGHTLY REDUCED for compactness */
 }
 
-/* Adjust the .size-item span rule if needed */
 .size-item span {
-  /* Remove or adjust any conflicting styles here if they are too general */
-  /* For example, if you had color: #666 here, it would apply to both */
   /* Specific classes .mrp-price and .discount-price will override more general rules */
 }
 
@@ -211,12 +208,14 @@ textarea {
   background-color: #218838;
 }
 
-/* Order Summary Section */
+/* Order Summary Section (Table Layout Fixes) */
 .summary-section {
-  margin-top: 30px; /* More space above summary */
+  margin-top: 30px;
   margin-bottom: 30px;
   background-color: #f0f8ff; /* Lighter blue for summary */
   border: 1px solid #a0cbed; /* Blue border */
+  border-radius: 8px; /* Consistent border-radius */
+  padding: 20px; /* Ensure consistent padding with other sections */
 }
 
 .summary-section h3 {
@@ -239,22 +238,54 @@ textarea {
   border-collapse: collapse;
   margin-top: 15px;
   font-size: 0.95em;
+  table-layout: fixed; /* Columns will take fixed width, helping alignment */
 }
 
 .summary-section th, .summary-section td {
   border: 1px solid #e0eaf3; /* Lighter table borders */
-  padding: 10px;
-  text-align: left;
+  padding: 8px; /* Slightly reduced padding for compactness within table */
+  vertical-align: middle; /* Vertically align content in the middle */
+  background-color: #ffffff; /* Default background for cells */
 }
 
 .summary-section th {
   background-color: #e9f5ff; /* Light blue header for table */
   font-weight: 600;
   color: #0056b3;
+  white-space: nowrap; /* Prevent header text from wrapping */
+  overflow: hidden; /* Hide overflow if text is too long */
+  text-overflow: ellipsis; /* Show ellipsis if text is hidden */
 }
 
-.summary-section td {
-  background-color: #ffffff;
+/* Specific column alignments for better readability */
+.summary-section th:nth-child(1),
+.summary-section td:nth-child(1) { /* Size column */
+  text-align: center; /* Center align Size */
+  width: 15%; /* Adjust width as needed */
+}
+
+.summary-section th:nth-child(2),
+.summary-section td:nth-child(2) { /* Qty column */
+  text-align: center; /* Center align Quantity */
+  width: 10%; /* Adjust width as needed */
+}
+
+.summary-section th:nth-child(3),
+.summary-section td:nth-child(3) { /* MRP (per) column */
+  text-align: right; /* Right align prices */
+  width: 25%; /* Adjust width as needed */
+}
+
+.summary-section th:nth-child(4),
+.summary-section td:nth-child(4) { /* Discount Price (per) column */
+  text-align: right; /* Right align prices */
+  width: 25%; /* Adjust width as needed */
+}
+
+.summary-section th:nth-child(5),
+.summary-section td:nth-child(5) { /* Line Total column */
+  text-align: right; /* Right align prices */
+  width: 25%; /* Adjust width as needed */
 }
 
 .summary-section p {
@@ -263,6 +294,7 @@ textarea {
   font-weight: 700; /* Bolder totals */
   color: #004085;
   text-align: right; /* Align totals to the right */
+  padding-right: 8px; /* Small padding for visual balance with table content */
 }
 
 .summary-section p strong {
@@ -300,6 +332,16 @@ textarea {
       width: 100%; /* Label takes full width on small screens */
       margin-bottom: 5px;
       text-align: center;
+  }
+
+  /* Responsive adjustments for the summary table on small screens */
+  .summary-section th {
+      font-size: 0.8em; /* Smaller font for headers on tiny screens */
+      padding: 4px; /* Less padding on headers */
+  }
+  .summary-section td {
+      font-size: 0.9em; /* Slightly smaller text in cells */
+      padding: 6px; /* Less padding in cells */
   }
 }
 
