@@ -261,7 +261,7 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
   }
 
   const mobileRegex = /^\d{10}$/; 
-  if (mobileRegex.test(contact)) {
+  if (mobileRegex.test(contact)==false) {
  alert("Please Enter Valid Contact Number before sending the order.");
       return;
   }
