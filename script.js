@@ -203,7 +203,7 @@ function showOrderSummary() {
           // HTML for item row
           htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp.toFixed(2)}</td><td>₹${item.discountPrice.toFixed(2)}</td><td>₹${item.lineTotal.toFixed(2)}</td></tr>`;
           // WhatsApp text for item
-          whatsappTextSummary += `\n  -  ${item.size}  -  ${item.quantity}  -  ₹${item.discountPrice}  -  : ₹${item.lineTotal}\n `;
+          whatsappTextSummary += `\n  -  ${item.size}  -  ${item.quantity}  -  ~₹${item.mrp}~  -  ₹${item.discountPrice}  -  : ₹${item.lineTotal}\n `;
           /*- Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice.toFixed(2)} (Total: ₹${item.lineTotal.toFixed(2)})\n`;*/
         });
 
