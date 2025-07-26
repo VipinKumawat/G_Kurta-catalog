@@ -106,7 +106,8 @@ function renderProductPricing(product) {
       });
 
       sortedSizes.forEach(size => {
-        const { MRP, ["Discount Price"]: discountPrice } = sizes[size];
+        const MRP= sizes[size],discountPrice=0;
+
         htmlContent += `
           <div class="size-item">
             <label>${size}:</label>
