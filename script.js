@@ -20,9 +20,11 @@ function populateDropdowns() {
   const typeSelect = document.getElementById('typeSelect');
   const colorSelect = document.getElementById('colorSelect');
 
+  // Reset both dropdowns initially
   typeSelect.innerHTML = '<option value="">Select Type</option>';
   colorSelect.innerHTML = '<option value="">Select Color</option>';
 
+  // Populate type dropdown
   const types = products.map(p => p.type);
   types.forEach(type => {
     const opt = document.createElement('option');
@@ -31,12 +33,15 @@ function populateDropdowns() {
     typeSelect.appendChild(opt);
   });
 
+  // When a type is selected
   typeSelect.addEventListener('change', () => {
     const selectedType = typeSelect.value;
     const product = products.find(p => p.type === selectedType);
 
+    // Reset color dropdown
     colorSelect.innerHTML = '<option value="">Select Color</option>';
 
+    // Populate color dropdown if variants exist
     if (product && product.variants) {
       product.variants.forEach(variant => {
         const opt = document.createElement('option');
@@ -45,14 +50,15 @@ function populateDropdowns() {
         colorSelect.appendChild(opt);
       });
     }
-else{
+
+    // Reset pricing, summary, and preview image
     document.getElementById('pricingOutputDiv').innerHTML = '<p>Please select a <strong>Type</strong> and <strong>Color</strong> to see pricing and sizes.</p>';
     document.getElementById('orderSummaryOutput').innerHTML = '';
     filteredProduct = null;
     updateImageAndPricing(); // reset image
   });
-  
 
+  // When a color is selected
   colorSelect.addEventListener('change', () => {
     updateImageAndPricing();
   });
@@ -70,22 +76,28 @@ function updateImageAndPricing() {
   if (product && variant) {
     filteredProduct = { ...product, ...variant };
 
-    const imagePath = `Catlogue_icon/${type.toLowerCase()}-page-${variant.page}.jpg`;
+    const imagePath = variant.page
+      ? `Catlogue_icon/${type.toLowerCase()}-page-${variant.page}.jpg`
+      : 'Catlogue_icon/default.png';
+
     img.src = imagePath;
     img.onerror = () => {
-      img.src = 'pluspont-logo.png';
+      img.src = 'Catlogue_icon/default.png';
     };
 
-    renderProductPricing(product); // pricing is on product level
+    renderProductPricing(product); // Custom function to show size & price
   } else {
     filteredProduct = null;
     img.src = 'Catlogue_icon/default.png';
-    pricingOutputDiv.innerHTML = '<p>Please select both <strong>Type</strong> and <strong>Color</strong> to see product details and pricing.</p>';
+    pricingOutputDiv.innerHTML = `
+      <p>Please select both <strong>Type</strong> and <strong>Color</strong> 
+      to see product details and pricing.</p>`;
   }
 }
 
 function renderProductPricing(product) {
   const pricingOutputDiv = document.getElementById('pricingOutputDiv');
+
   if (!product || !product.pricing) {
     pricingOutputDiv.innerHTML = '<p>No pricing available for this selection.</p>';
     return;
@@ -99,25 +111,24 @@ function renderProductPricing(product) {
       htmlContent += `<h4>${category}'s:</h4><div class="category-sizes">`;
 
       const sizes = product.pricing[category];
-      
+
       Object.keys(sizes).forEach(sizeKey => {
-        const MRP= sizes[sizeKey].MRP;
+        const MRP = sizes[sizeKey].MRP;
         const discountPercentage = 0.25;
-        const discountPrice = MRP -(MRP*discountAmount) ;
-        return Math.round(discountedPrice);
+        const discountPrice = Math.round(MRP - (MRP * discountPercentage));
 
         htmlContent += `
           <div class="size-item">
-            <label>${size}:</label>
+            <label>${sizeKey}:</label>
             <input type="number" min="0" value="0"
               data-category="${category}"
-              data-size="${size}"
+              data-size="${sizeKey}"
               data-mrp="${MRP}"
               data-discount="${discountPrice}"
               class="qty-input"
               placeholder="Qty"/>
-            <span class="mrp-price"> ₹${MRP}</span>
-            <span class="discount-price"> ₹${discountPrice}</span>
+            <span class="mrp-price">MRP: ₹${MRP}</span>
+            <span class="discount-price">Offer: ₹${discountPrice}</span>
           </div>`;
       });
 
