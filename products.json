@@ -4,31 +4,31 @@
     "pdf": "plain.pdf",
     "pricing": {
       "Mens": {
-        "32": { "MRP": 220, "Discount Price": 160 },
-        "34": { "MRP": 220, "Discount Price": 160 },
-        "36": { "MRP": 220, "Discount Price": 160 },
-        "38": { "MRP": 220, "Discount Price": 160 },
-        "40": { "MRP": 220, "Discount Price": 160 },
-        "42": { "MRP": 220, "Discount Price": 160 },
-        "44": { "MRP": 240, "Discount Price": 170 },
-        "46": { "MRP": 260, "Discount Price": 180 },
-        "48": { "MRP": 280, "Discount Price": 190 }
+        "32": { "MRP": 220 },
+        "34": { "MRP": 220 },
+        "36": { "MRP": 220 },
+        "38": { "MRP": 220 },
+        "40": { "MRP": 220 },
+        "42": { "MRP": 220 },
+        "44": { "MRP": 240 },
+        "46": { "MRP": 260 },
+        "48": { "MRP": 280 }
       },
       "Ladies": {
-        "36_S":     { "MRP": 240, "Discount Price": 170 },
-        "38_M":     { "MRP": 240, "Discount Price": 170 },
-        "40_L":     { "MRP": 240, "Discount Price": 170 },
-        "42_XL":    { "MRP": 240, "Discount Price": 170 },
-        "44_XXL":   { "MRP": 240, "Discount Price": 170 },
-        "46_XXXL":  { "MRP": 260, "Discount Price": 180 },
-        "48_XXXXL": { "MRP": 260, "Discount Price": 180 }
+        "36_S":     { "MRP": 240 },
+        "38_M":     { "MRP": 240 },
+        "40_L":     { "MRP": 240 },
+        "42_XL":    { "MRP": 240 },
+        "44_XXL":   { "MRP": 240 },
+        "46_XXXL":  { "MRP": 260 },
+        "48_XXXXL": { "MRP": 260 }
       },
       "Kids": {
-        "22": { "MRP": 160, "Discount Price": 130 },
-        "24": { "MRP": 160, "Discount Price": 130 },
-        "26": { "MRP": 160, "Discount Price": 130 },
-        "28": { "MRP": 160, "Discount Price": 130 },
-        "30": { "MRP": 160, "Discount Price": 130 }
+        "22": { "MRP": 160 },
+        "24": { "MRP": 160 },
+        "26": { "MRP": 160 },
+        "28": { "MRP": 160 },
+        "30": { "MRP": 160 }
       }
     },
     "variants": [
@@ -49,31 +49,31 @@
     "pdf": "lakhnavi.pdf",
     "pricing": {
       "Mens": {
-        "32": { "MRP": 500, "Discount Price": 450 },
-        "34": { "MRP": 500, "Discount Price": 450 },
-        "36": { "MRP": 500, "Discount Price": 450 },
-        "38": { "MRP": 500, "Discount Price": 450 },
-        "40": { "MRP": 500, "Discount Price": 450 },
-        "42": { "MRP": 500, "Discount Price": 450 },
-        "44": { "MRP": 600, "Discount Price": 500 },
-        "46": { "MRP": 600, "Discount Price": 500 },
-        "48": { "MRP": 600, "Discount Price": 500 }
+        "32": { "MRP": 500 },
+        "34": { "MRP": 500 },
+        "36": { "MRP": 500 },
+        "38": { "MRP": 500 },
+        "40": { "MRP": 500 },
+        "42": { "MRP": 500 },
+        "44": { "MRP": 600 },
+        "46": { "MRP": 600 },
+        "48": { "MRP": 600 }
       },
       "Ladies": {
-        "36_S":     { "MRP": 520, "Discount Price": 460 },
-        "38_M":     { "MRP": 520, "Discount Price": 460 },
-        "40_L":     { "MRP": 520, "Discount Price": 460 },
-        "42_XL":    { "MRP": 520, "Discount Price": 460 },
-        "44_XXL":   { "MRP": 520, "Discount Price": 460 },
-        "46_XXXL":  { "MRP": 520, "Discount Price": 460 },
-        "48_XXXXL": { "MRP": 520, "Discount Price": 460 }
+        "36_S":     { "MRP": 520 },
+        "38_M":     { "MRP": 520 },
+        "40_L":     { "MRP": 520 },
+        "42_XL":    { "MRP": 520 },
+        "44_XXL":   { "MRP": 520 },
+        "46_XXXL":  { "MRP": 520 },
+        "48_XXXXL": { "MRP": 520 }
       },
       "Kids": {
-        "22": { "MRP": 360, "Discount Price": 380 },
-        "24": { "MRP": 360, "Discount Price": 380 },
-        "26": { "MRP": 360, "Discount Price": 380 },
-        "28": { "MRP": 360, "Discount Price": 380 },
-        "30": { "MRP": 360, "Discount Price": 380 }
+        "22": { "MRP": 360 },
+        "24": { "MRP": 360 },
+        "26": { "MRP": 360 },
+        "28": { "MRP": 360 },
+        "30": { "MRP": 360 }
       }
     },
     "variants": [
@@ -91,31 +91,31 @@
     "pdf": "printat.pdf",
     "pricing": {
       "Mens": {
-        "32": { "MRP": 440, "Discount Price": 320 },
-        "34": { "MRP": 440, "Discount Price": 320 },
-        "36": { "MRP": 440, "Discount Price": 320 },
-        "38": { "MRP": 440, "Discount Price": 320 },
-        "40": { "MRP": 440, "Discount Price": 320 },
-        "42": { "MRP": 440, "Discount Price": 320 },
-        "44": { "MRP": 520, "Discount Price": 360 },
-        "46": { "MRP": 520, "Discount Price": 360 },
-        "48": { "MRP": 520, "Discount Price": 360 }
+        "32": { "MRP": 440 },
+        "34": { "MRP": 440 },
+        "36": { "MRP": 440 },
+        "38": { "MRP": 440 },
+        "40": { "MRP": 440 },
+        "42": { "MRP": 440 },
+        "44": { "MRP": 520 },
+        "46": { "MRP": 520 },
+        "48": { "MRP": 520 }
       },
       "Ladies": {
-        "36_S":     { "MRP": 440, "Discount Price": 320 },
-        "38_M":     { "MRP": 440, "Discount Price": 320 },
-        "40_L":     { "MRP": 440, "Discount Price": 320 },
-        "42_XL":    { "MRP": 440, "Discount Price": 320 },
-        "44_XXL":   { "MRP": 440, "Discount Price": 320 },
-        "46_XXXL":  { "MRP": 520, "Discount Price": 360 },
-        "48_XXXXL": { "MRP": 520, "Discount Price": 360 }
+        "36_S":     { "MRP": 440 },
+        "38_M":     { "MRP": 440 },
+        "40_L":     { "MRP": 440 },
+        "42_XL":    { "MRP": 440 },
+        "44_XXL":   { "MRP": 440 },
+        "46_XXXL":  { "MRP": 520 },
+        "48_XXXXL": { "MRP": 520 }
       },
       "Kids": {
-        "22": { "MRP": 340, "Discount Price": 270 },
-        "24": { "MRP": 340, "Discount Price": 270 },
-        "26": { "MRP": 340, "Discount Price": 270 },
-        "28": { "MRP": 340, "Discount Price": 270 },
-        "30": { "MRP": 340, "Discount Price": 270 }
+        "22": { "MRP": 340 },
+        "24": { "MRP": 340 },
+        "26": { "MRP": 340 },
+        "28": { "MRP": 340 },
+        "30": { "MRP": 340 }
       }
     },
     "variants": [
