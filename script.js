@@ -98,15 +98,12 @@ function renderProductPricing(product) {
       htmlContent += `<h4>${category}'s:</h4><div class="category-sizes">`;
 
       const sizes = product.pricing[category];
-      const sortedSizes = Object.keys(sizes).sort((a, b) => {
-        const numA = parseInt(a);
-        const numB = parseInt(b);
-        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-        return a.localeCompare(b);
-      });
-
-      sortedSizes.forEach(size => {
-        const MRP= sizes[size],discountPrice=0;
+      
+      sizes.forEach(size => {
+        const MRP= sizes["MRP"];
+        const discountPercentage = 0.25;
+        const discountPrice = MRP -(MRP*discountAmount) ;
+        return Math.round(discountedPrice);
 
         htmlContent += `
           <div class="size-item">
