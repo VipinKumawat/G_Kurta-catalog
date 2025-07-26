@@ -115,7 +115,7 @@ function renderProductPricing(product) {
       Object.keys(sizes).forEach(sizeKey => {
         const MRP = sizes[sizeKey].MRP;
         const discountPercentage = 0.25;
-        const discountPrice = Math.round(MRP - (MRP * discountPercentage));
+        const discountPrice = Math.round((MRP - (MRP * discountPercentage))/10)*10;
 
         htmlContent += `
           <div class="size-item">
