@@ -45,12 +45,13 @@ function populateDropdowns() {
         colorSelect.appendChild(opt);
       });
     }
-
+else{
     document.getElementById('pricingOutputDiv').innerHTML = '<p>Please select a <strong>Type</strong> and <strong>Color</strong> to see pricing and sizes.</p>';
     document.getElementById('orderSummaryOutput').innerHTML = '';
     filteredProduct = null;
     updateImageAndPricing(); // reset image
   });
+  
 
   colorSelect.addEventListener('change', () => {
     updateImageAndPricing();
