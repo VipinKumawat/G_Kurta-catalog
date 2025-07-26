@@ -103,7 +103,7 @@ function renderProductPricing(product) {
         const MRP= sizes["MRP"];
         const discountPercentage = 0.25;
         const discountPrice = MRP -(MRP*discountAmount) ;
-        return Math.round(discountedPrice);
+        return Math.round(discountPrice);
 
         htmlContent += `
           <div class="size-item">
