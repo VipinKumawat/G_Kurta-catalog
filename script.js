@@ -1,5 +1,5 @@
 let products = [];
-let filteredProduct = null; // Will hold the single selected product
+let filteredProduct = null;
 
 window.onload = async () => {
   try {
@@ -8,10 +8,7 @@ window.onload = async () => {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
     products = await res.json();
-
-    // Set default image on load
     document.getElementById('previewImage').src = 'Catlogue_icon/default.png';
-
     populateDropdowns();
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -23,12 +20,10 @@ function populateDropdowns() {
   const typeSelect = document.getElementById('typeSelect');
   const colorSelect = document.getElementById('colorSelect');
 
-  // Clear existing options
   typeSelect.innerHTML = '<option value="">Select Type</option>';
   colorSelect.innerHTML = '<option value="">Select Color</option>';
 
-  // Type dropdown
-  const types = [...new Set(products.map(p => p.type))];
+  const types = products.map(p => p.type);
   types.forEach(type => {
     const opt = document.createElement('option');
     opt.value = type;
@@ -36,31 +31,27 @@ function populateDropdowns() {
     typeSelect.appendChild(opt);
   });
 
-  // Event: When type changes, populate colors and update image
   typeSelect.addEventListener('change', () => {
     const selectedType = typeSelect.value;
-    const productsOfType = products.filter(p => p.type === selectedType);
+    const product = products.find(p => p.type === selectedType);
 
-    // Color
-    colorSelect.innerHTML = '<option value="">Select Color</option>'; // Reset color dropdown
-    if (selectedType) { // Only populate if a type is selected
-      // Sort colors alphabetically for better UX
-      [...new Set(productsOfType.map(p => p.color))].sort().forEach(color => {
+    colorSelect.innerHTML = '<option value="">Select Color</option>';
+
+    if (product && product.variants) {
+      product.variants.forEach(variant => {
         const opt = document.createElement('option');
-        opt.value = color;
-        opt.textContent = color;
+        opt.value = variant.color;
+        opt.textContent = variant.color;
         colorSelect.appendChild(opt);
       });
     }
-    // Reset pricing and summary when type changes
-    document.getElementById('pricingOutputDiv').innerHTML = '<p>Please select a **Type** and **Color** to see pricing and sizes.</p>';
-    document.getElementById('orderSummaryOutput').innerHTML = '';
-    filteredProduct = null; // Clear selected product
 
-    updateImageAndPricing(); // Call to update image and pricing based on current selections
+    document.getElementById('pricingOutputDiv').innerHTML = '<p>Please select a <strong>Type</strong> and <strong>Color</strong> to see pricing and sizes.</p>';
+    document.getElementById('orderSummaryOutput').innerHTML = '';
+    filteredProduct = null;
+    updateImageAndPricing(); // reset image
   });
 
-  // Event: When color changes, update image and pricing
   colorSelect.addEventListener('change', () => {
     updateImageAndPricing();
   });
@@ -72,19 +63,23 @@ function updateImageAndPricing() {
   const img = document.getElementById('previewImage');
   const pricingOutputDiv = document.getElementById('pricingOutputDiv');
 
-  // Find the exact product
-  filteredProduct = products.find(p => p.type === type && p.color === color);
+  const product = products.find(p => p.type === type);
+  const variant = product?.variants.find(v => v.color === color);
 
-  if (filteredProduct) {
-    const imagePath = `Catlogue_icon/${filteredProduct.type.toLowerCase()}-page-${filteredProduct.page}.jpg`;
+  if (product && variant) {
+    filteredProduct = { ...product, ...variant };
+
+    const imagePath = `Catlogue_icon/${type.toLowerCase()}-page-${variant.page}.jpg`;
     img.src = imagePath;
     img.onerror = () => {
-      img.src = 'pluspont-logo.png'; // Fallback image if actual image not found
+      img.src = 'pluspont-logo.png';
     };
-    renderProductPricing(filteredProduct);
+
+    renderProductPricing(product); // pricing is on product level
   } else {
-    img.src = 'Catlogue_icon/default.png'; // Fallback if no product matches or selection incomplete
-    pricingOutputDiv.innerHTML = '<p>Please select both **Type** and **Color** to see product details and pricing.</p>';
+    filteredProduct = null;
+    img.src = 'Catlogue_icon/default.png';
+    pricingOutputDiv.innerHTML = '<p>Please select both <strong>Type</strong> and <strong>Color</strong> to see product details and pricing.</p>';
   }
 }
 
@@ -96,58 +91,50 @@ function renderProductPricing(product) {
   }
 
   let htmlContent = '<h3>Available Sizes & Pricing:</h3>';
+  const categoriesOrder = ['Mens', 'Ladies', 'Kids'];
 
-  // Define a consistent order for categories if desired, otherwise loop directly
-  const categoriesOrder = [ 'Mens', 'Ladies', 'Kids'];
-  
   categoriesOrder.forEach(category => {
-    if (Object.hasOwnProperty.call(product.pricing, category)) {
+    if (product.pricing[category]) {
       htmlContent += `<h4>${category}'s:</h4><div class="category-sizes">`;
-      const sizes = product.pricing[category];
 
-      // Sort sizes for better readability, especially for Kids/Mens numerical sizes
+      const sizes = product.pricing[category];
       const sortedSizes = Object.keys(sizes).sort((a, b) => {
-        // Attempt numeric sort first, then fallback to string sort
         const numA = parseInt(a);
         const numB = parseInt(b);
-        if (!isNaN(numA) && !isNaN(numB)) {
-          return numA - numB;
-        }
+        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
         return a.localeCompare(b);
       });
 
       sortedSizes.forEach(size => {
-        const pricing = sizes[size];
-        const mrp = pricing["MRP"] || 0;
-        const discountPrice = pricing["Discount Price"] || 0;
-
-       htmlContent += `
-  <div class="size-item">
-    <label>${size}:</label>
-    <input type="number" min="0" value="0"
-           data-category="${category}"
-           data-size="${size}"
-           data-mrp="${mrp}"
-           data-discount="${discountPrice}"
-           class="qty-input"
-           placeholder="Qty"/>
-    <span class="mrp-price"> ₹${mrp}</span>  <span class="discount-price"> ₹${discountPrice}</span> </div>
-`;
-
+        const { MRP, ["Discount Price"]: discountPrice } = sizes[size];
+        htmlContent += `
+          <div class="size-item">
+            <label>${size}:</label>
+            <input type="number" min="0" value="0"
+              data-category="${category}"
+              data-size="${size}"
+              data-mrp="${MRP}"
+              data-discount="${discountPrice}"
+              class="qty-input"
+              placeholder="Qty"/>
+            <span class="mrp-price"> ₹${MRP}</span>
+            <span class="discount-price"> ₹${discountPrice}</span>
+          </div>`;
       });
+
       htmlContent += `</div>`;
     }
   });
+
   pricingOutputDiv.innerHTML = htmlContent;
 }
 
-// Function to generate and display the order summary
 function showOrderSummary() {
   const orderSummaryOutput = document.getElementById('orderSummaryOutput');
 
   if (!filteredProduct) {
     orderSummaryOutput.innerHTML = '<p class="error-message">Please select a product (Type and Color) first.</p>';
-    return { html: '<p>Please select a product first.</p>', whatsapp: 'Please select a product first.' };
+    return { html: '', whatsapp: 'Please select a product first.' };
   }
 
   const qtyInputs = document.querySelectorAll('#pricingOutputDiv .qty-input');
@@ -157,7 +144,6 @@ function showOrderSummary() {
 
   qtyInputs.forEach(input => {
     const quantity = parseInt(input.value);
-
     if (quantity > 0) {
       const category = input.dataset.category;
       const size = input.dataset.size;
@@ -165,20 +151,18 @@ function showOrderSummary() {
       const discountPrice = parseFloat(input.dataset.discount);
 
       const itemDetails = {
-        size: size,
-        quantity: quantity,
-        mrp: mrp,
-        discountPrice: discountPrice,
+        size,
+        quantity,
+        mrp,
+        discountPrice,
         lineTotal: quantity * discountPrice
       };
 
-      if (!selectedItemsByCategory[category]) {
-        selectedItemsByCategory[category] = [];
-      }
+      if (!selectedItemsByCategory[category]) selectedItemsByCategory[category] = [];
       selectedItemsByCategory[category].push(itemDetails);
 
       totalItems += quantity;
-      totalPrice += (quantity * discountPrice);
+      totalPrice += itemDetails.lineTotal;
     }
   });
 
@@ -186,65 +170,40 @@ function showOrderSummary() {
   let whatsappTextSummary = '';
 
   if (Object.keys(selectedItemsByCategory).length > 0) {
-    // --- Generate HTML Summary ---
     htmlSummary += `<h3>Order Summary for ${filteredProduct.color} (${filteredProduct.type})</h3>`;
+    const categoriesOrder = ['Mens', 'Ladies', 'Kids'];
 
-    // Ensure categories are listed in a consistent order ( Mens, Ladies, Kids)
-    const categoriesOrder = [ 'Mens', 'Ladies','Kids'];
     categoriesOrder.forEach(category => {
-      if (selectedItemsByCategory[category] && selectedItemsByCategory[category].length > 0) {
-        // HTML for category
-        htmlSummary += `<h4>Category: ${category}</h4><table><thead><tr><th>Size</th><th>Qty</th><th>MRP (per)</th><th>Discount Price (per)</th><th>Line Total</th></tr></thead><tbody>`;
-
-        // WhatsApp text for category
-        whatsappTextSummary += `*Category: ${category}*\n\n  - Size  -  Qty  -  Price  -  Total\n `;
+      if (selectedItemsByCategory[category]) {
+        htmlSummary += `<h4>Category: ${category}</h4><table><thead><tr><th>Size</th><th>Qty</th><th>MRP</th><th>Discount</th><th>Total</th></tr></thead><tbody>`;
+        whatsappTextSummary += `*Category: ${category}*\n- Size - Qty - Price - Total\n`;
 
         selectedItemsByCategory[category].forEach(item => {
-          // HTML for item row
           htmlSummary += `<tr><td>${item.size}</td><td>${item.quantity}</td><td>₹${item.mrp}</td><td>₹${item.discountPrice}</td><td>₹${item.lineTotal}</td></tr>`;
-          // WhatsApp text for item
-          whatsappTextSummary += `\n  -  ${item.size}  -  ${item.quantity}  -  ~₹${item.mrp}~  -  ₹${item.discountPrice}  -  : ₹${item.lineTotal}\n `;
-          /*- Size: ${item.size}, Qty: ${item.quantity}, Price: ₹${item.discountPrice} (Total: ₹${item.lineTotal})\n`;*/
+          whatsappTextSummary += `- ${item.size} - ${item.quantity} - ₹${item.discountPrice} - ₹${item.lineTotal}\n`;
         });
 
-        // Close HTML table for category
         htmlSummary += `</tbody></table>`;
-        // Add a blank line for readability between categories in WhatsApp text
         whatsappTextSummary += `\n`;
       }
     });
 
-    // --- Final HTML totals ---
-    htmlSummary += `
-      <p><strong>Total Items:</strong> ${totalItems}</p>
-      <p><strong>Overall Total:</strong> ₹${totalPrice.toFixed(2)}</p>
-    `;
-
-    // --- Final WhatsApp text totals ---
-    whatsappTextSummary += `*Total Items:* ${totalItems}\n`;
-    whatsappTextSummary += `*Overall Total:* ₹${totalPrice}`;
-
+    htmlSummary += `<p><strong>Total Items:</strong> ${totalItems}</p><p><strong>Overall Total:</strong> ₹${totalPrice.toFixed(2)}</p>`;
+    whatsappTextSummary += `*Total Items:* ${totalItems}\n*Overall Total:* ₹${totalPrice}`;
   } else {
     htmlSummary = '<p>No items selected for order. Please enter quantities.</p>';
     whatsappTextSummary = 'No items selected for order. Please enter quantities.';
   }
 
-  // Display HTML summary on the webpage
   orderSummaryOutput.innerHTML = htmlSummary;
 
-  // Return both summaries
-  return {
-    html: htmlSummary,
-    whatsapp: whatsappTextSummary
-  };
+  return { html: htmlSummary, whatsapp: whatsappTextSummary };
 }
 
-// Event listener for the "Show Order Summary" button
 document.getElementById("orderSummaryButton").addEventListener("click", showOrderSummary);
 
-// Event listener for the "Send Order on WhatsApp" button
 document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
-  const summaries = showOrderSummary(); // First, generate and display the summary
+  const summaries = showOrderSummary();
 
   if (!filteredProduct) {
     alert("Please select a product (Type and Color) and enter quantities before sending the order.");
@@ -256,28 +215,26 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
   const contact = document.getElementById('contactNumber').value.trim();
 
   if (!groupName || !address || !contact) {
-      alert("Please fill in Group Name, Delivery Address, and Contact Number before sending the order.");
-      return;
+    alert("Please fill in Group Name, Delivery Address, and Contact Number before sending the order.");
+    return;
   }
 
-  const mobileRegex = /^\d{10}$/; 
-  if (mobileRegex.test(contact)==false) {
- alert("Please Enter Valid Contact Number before sending the order.");
-      return;
+  const mobileRegex = /^\d{10}$/;
+  if (!mobileRegex.test(contact)) {
+    alert("Please enter a valid 10-digit contact number.");
+    return;
   }
 
-  // Construct the final WhatsApp message
-  let finalWhatsappMessage = `Hi! I want to place a group order for:\n\n`;
-  finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n\n`;
-  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n\n`;
-  finalWhatsappMessage += summaries.whatsapp; // Add the dynamic order summary
-  finalWhatsappMessage += `\n\n*👥 Group Name:* ${groupName}`;
-  finalWhatsappMessage += `\n*🏠 Address:* ${address}`;
-  finalWhatsappMessage += `\n*📞 Contact Number:* ${contact}`;
-  finalWhatsappMessage += `\n\n*🗓️ Order Date:* ${new Date().toLocaleDateString("en-IN")}`; // Format date for India
+  let finalWhatsappMessage = `Hi! I want to place a group order:\n\n`;
+  finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n`;
+  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n`;
+  finalWhatsappMessage += summaries.whatsapp;
+  finalWhatsappMessage += `\n\n👥 *Group Name:* ${groupName}`;
+  finalWhatsappMessage += `\n🏠 *Address:* ${address}`;
+  finalWhatsappMessage += `\n📞 *Contact:* ${contact}`;
+  finalWhatsappMessage += `\n🗓️ *Date:* ${new Date().toLocaleDateString("en-IN")}`;
   finalWhatsappMessage += `\n\n📦 Thanks for your group order!`;
 
-  // Open WhatsApp with the pre-filled message
   const whatsappURL = `https://wa.me/918866244409?text=${encodeURIComponent(finalWhatsappMessage)}`;
   window.open(whatsappURL, "_blank");
 });
