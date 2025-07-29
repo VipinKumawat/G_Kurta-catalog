@@ -222,10 +222,10 @@ h4 {
     padding: 20px;
 }
 
-/* UPDATED RULES FOR SIZE/QTY BOXES */
+/* UPDATED RULES FOR SIZE/QTY BOXES - ONE LINE DISPLAY */
 .category-sizes {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust minmax width for more items per row */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjusted minmax width to accommodate single line */
     gap: 10px; /* Reduced gap between size items */
     margin-top: 15px;
     padding: 10px;
@@ -237,12 +237,13 @@ h4 {
     border: 1px solid #FFDAB9; /* Peach Puff - soft border */
     border-radius: 8px;
     padding: 10px; /* Reduced padding inside each size item */
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Reduced gap between elements within a size item */
+    display: flex; /* Use flexbox */
+    flex-direction: row; /* VERY IMPORTANT: Arrange items in a row */
+    align-items: center; /* Vertically align items in the middle */
+    justify-content: space-between; /* Distribute space between items */
+    gap: 8px; /* Gap between elements within a size item */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    align-items: flex-start; /* Align contents to the left within the box */
 }
 
 .size-item:hover {
@@ -254,17 +255,18 @@ h4 {
     font-weight: bold;
     color: #8B4513; /* Saddle Brown */
     font-size: 0.95em; /* Slightly smaller label font */
-    margin-bottom: 2px; /* Add a little space below the label */
+    white-space: nowrap; /* Prevent label from wrapping */
 }
 
 .qty-input {
-    width: 60px; /* Significantly reduced width of the input box */
+    width: 60px; /* Reduced width of the input box */
     padding: 8px; /* Reduced padding for the input text */
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 0.9em; /* Slightly smaller font in input */
     text-align: center;
     -moz-appearance: textfield; /* Hide arrows on Firefox */
+    flex-shrink: 0; /* Prevent input from shrinking */
 }
 
 /* Hide arrows for Chrome, Safari, Edge */
@@ -278,12 +280,16 @@ h4 {
     color: #888;
     text-decoration: line-through; /* Strikethrough for MRP */
     font-size: 0.8em; /* Smaller font for MRP */
+    white-space: nowrap; /* Prevent MRP from wrapping */
+    flex-shrink: 0; /* Prevent from shrinking */
 }
 
 .discount-price {
     color: #228B22; /* Forest Green - strong highlight for offer price */
     font-weight: bold;
     font-size: 0.9em; /* Smaller font for discount price */
+    white-space: nowrap; /* Prevent offer price from wrapping */
+    flex-shrink: 0; /* Prevent from shrinking */
 }
 
 /* Action Buttons */
@@ -449,7 +455,7 @@ h4 {
     }
 
     .category-sizes {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Adjust for smaller items on tablet */
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjusted for smaller items on tablet, still allowing one line */
     }
 
     .action-button {
@@ -495,5 +501,12 @@ h4 {
 
     .category-sizes {
         grid-template-columns: 1fr; /* Single column on very small screens */
+    }
+
+    /* Adjust size-item layout for very small screens if needed */
+    .size-item {
+        flex-wrap: wrap; /* Allow wrapping if content is too long on very small screens */
+        justify-content: flex-start; /* Start items from left */
+        gap: 5px; /* Adjust gap */
     }
 }
