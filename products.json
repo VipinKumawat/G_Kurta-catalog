@@ -37,7 +37,7 @@
       { "id": "P04", "number": "04", "color": "Yellow",   "page": 3 },
       { "id": "P05", "number": "05", "color": "Black",    "page": 4 },
       { "id": "P06", "number": "06", "color": "Sky",      "page": 5 },
-      { "id": "P07", "number": "07", "color": "Bottle green", "page": 6 },
+      { "id": "P07", "number": "07", "color": "Bottle Green", "page": 6 },
       { "id": "P08", "number": "08", "color": "Rama",     "page": 7 },
       { "id": "P09", "number": "09", "color": "Blue",     "page": 8 },
       { "id": "P01", "number": "01", "color": "Orange",   "page": 9 },
@@ -78,7 +78,7 @@
     },
     "variants": [
       { "id": "L11", "number": "11", "color": "Wine",     "page": 1 },
-      { "id": "L12", "number": "12", "color": "B. Green", "page": 2 },
+      { "id": "L12", "number": "12", "color": "Bottle Green", "page": 2 },
       { "id": "L13", "number": "13", "color": "Maroon",   "page": 3 },
       { "id": "L14", "number": "14", "color": "White",    "page": 4 },
       { "id": "L15", "number": "15", "color": "Blue",     "page": 5 },
