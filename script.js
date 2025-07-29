@@ -23,7 +23,7 @@ function populateDropdowns() {
   // Reset both dropdowns initially
   typeSelect.innerHTML = '<option value="">Select Type</option>';
   colorSelect.innerHTML = '<option value="">Select Color</option>';
-
+  
   // Populate type dropdown
   // Ensure types are unique
   const uniqueTypes = [...new Set(products.map(p => p.type))];
@@ -138,16 +138,16 @@ function renderProductPricing(product) {
 
       const sizes = product.pricing[category];
 
-     /* // Sort sizes for consistent display (e.g., S, M, L, XL, XXL)
+      // Sort sizes for consistent display (e.g., S, M, L, XL, XXL)
       const sortedSizeKeys = Object.keys(sizes).sort((a, b) => {
         const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL']; // Define your order
         const indexA = sizeOrder.indexOf(a.toUpperCase());
         const indexB = sizeOrder.indexOf(b.toUpperCase());
         if (indexA !== -1 && indexB !== -1) return indexA - indexB;
         return a.localeCompare(b); // Fallback for other sizes
-      }); */
+      }); 
 
-      Object.keys(sizes).forEach(sizeKey => {
+      sortedSizeKeys.forEach(sizeKey => {
         const MRP = sizes[sizeKey].MRP;
         const discountPercentage = 0.25; // 25% discount
         const discountPrice = Math.round((MRP - (MRP * discountPercentage)) / 10) * 10; // Round to nearest 10
@@ -301,4 +301,3 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
   const whatsappURL = `https://wa.me/918866244409?text=${encodeURIComponent(finalWhatsappMessage)}`;
   window.open(whatsappURL, "_blank");
 });
-
