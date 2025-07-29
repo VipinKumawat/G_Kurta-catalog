@@ -113,7 +113,7 @@ function renderProductPricing(product) {
   }
 
   let htmlContent = `
-    <h3>Available Sizes & Pricing:</h3>
+    <h3>Type: ${product.type} Colour: ${product.color} Available Sizes & Pricing:</h3>
     <div class="tabs">
       <div class="tab-buttons">
         <button class="tab-button active" data-tab="mens">Mens</button>
