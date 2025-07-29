@@ -222,14 +222,13 @@ h4 {
     padding: 20px;
 }
 
-
+/* UPDATED RULES FOR SIZE/QTY BOXES */
 .category-sizes {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid for sizes */
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Adjust minmax width for more items per row */
+    gap: 10px; /* Reduced gap between size items */
     margin-top: 15px;
     padding: 10px;
-    /* Removed border-top here as h4 in tab-pane handles separation */
     padding-top: 0px; /* Adjust padding for inside tabs */
 }
 
@@ -237,12 +236,13 @@ h4 {
     background-color: #ffffff;
     border: 1px solid #FFDAB9; /* Peach Puff - soft border */
     border-radius: 8px;
-    padding: 15px;
+    padding: 10px; /* Reduced padding inside each size item */
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px; /* Reduced gap between elements within a size item */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    align-items: flex-start; /* Align contents to the left within the box */
 }
 
 .size-item:hover {
@@ -253,15 +253,16 @@ h4 {
 .size-item label {
     font-weight: bold;
     color: #8B4513; /* Saddle Brown */
-    font-size: 1.05em;
+    font-size: 0.95em; /* Slightly smaller label font */
+    margin-bottom: 2px; /* Add a little space below the label */
 }
 
 .qty-input {
-    width: 100%; /* Full width within its container */
-    padding: 10px;
+    width: 60px; /* Significantly reduced width of the input box */
+    padding: 8px; /* Reduced padding for the input text */
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 0.9em; /* Slightly smaller font in input */
     text-align: center;
     -moz-appearance: textfield; /* Hide arrows on Firefox */
 }
@@ -273,17 +274,16 @@ h4 {
     margin: 0;
 }
 
-
 .mrp-price {
     color: #888;
     text-decoration: line-through; /* Strikethrough for MRP */
-    font-size: 0.9em;
+    font-size: 0.8em; /* Smaller font for MRP */
 }
 
 .discount-price {
     color: #228B22; /* Forest Green - strong highlight for offer price */
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 0.9em; /* Smaller font for discount price */
 }
 
 /* Action Buttons */
@@ -449,7 +449,7 @@ h4 {
     }
 
     .category-sizes {
-        grid-template-columns: 1fr; /* Single column on small screens */
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Adjust for smaller items on tablet */
     }
 
     .action-button {
@@ -491,5 +491,9 @@ h4 {
     .summary-section th, .summary-section td {
         padding: 8px 10px;
         font-size: 0.9em;
+    }
+
+    .category-sizes {
+        grid-template-columns: 1fr; /* Single column on very small screens */
     }
 }
