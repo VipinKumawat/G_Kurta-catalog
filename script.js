@@ -290,7 +290,7 @@ document.getElementById("sendOrderWhatsapp").addEventListener("click", () => {
 
   let finalWhatsappMessage = `Hi! I want to place a group order:\n\n`;
   finalWhatsappMessage += `🧥 *Product:* ${filteredProduct.type} – ${filteredProduct.color} – No. ${filteredProduct.number}\n`;
-  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf || 'N/A'}\n\n`; // Handle missing PDF
+  finalWhatsappMessage += `📄 *Catalogue:* Page ${filteredProduct.page} | File: ${filteredProduct.pdf}\n\n`; // Handle missing PDF
   finalWhatsappMessage += summaries.whatsapp;
   finalWhatsappMessage += `\n\n👥 *Group Name:* ${groupName}`;
   finalWhatsappMessage += `\n🏠 *Address:* ${address}`;
