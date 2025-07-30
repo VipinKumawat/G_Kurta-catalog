@@ -259,7 +259,7 @@ h4 {
 }
 
 .qty-input {
-    width: 60px; /* Reduced width of the input box */
+    width: 50px; /* Reduced width of the input box */
     padding: 8px; /* Reduced padding for the input text */
     border: 1px solid #ccc;
     border-radius: 5px;
